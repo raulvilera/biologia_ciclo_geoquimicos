@@ -196,6 +196,27 @@
             background-color: rgba(0, 0, 0, 0.2);
         }
         
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #26d0ce;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         @media (max-width: 768px) {
             .student-info {
                 grid-template-columns: 1fr;
@@ -234,6 +255,11 @@
 
         <div id="questions-container">
             <!-- As questões serão inseridas aqui via JavaScript -->
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Enviando respostas, aguarde...</p>
         </div>
 
         <div class="buttons">
@@ -324,7 +350,7 @@
             },
             {
                 id: 3,
-                question: "Em uma investigação sobre o ciclo do nitrogênio, um grupo de alunos analisou o papel de diferentes microorganismos. Eles descobriram que certas bactérias realizam processos essenciais para converter o nitrogênio atmosférico em formas utilizáveis pelas plantas. Qual das seguintes afirmações melhor descreve a importância ecológica da fixação biológica de nitrogênio?",
+                question: "Em uma investigação sobre o ciclo do nitrogênio, um grupo de alunos analisou o papel de diferentes microorganismos. Eles descobriram que certas bactérias realizam processos essenciais para convertir o nitrogênio atmosférico em formas utilizáveis pelas plantas. Qual das seguintes afirmações melhor descreve a importância ecológica da fixação biológica de nitrogênio?",
                 options: [
                     { id: "a", text: "As bactérias nitrificantes convertem amônia em nitrito e depois em nitrato, formas mais facilmente absorvidas pelas raízes das plantas." },
                     { id: "b", text: "As cianobactérias e rizóbios convertem o N₂ atmosférico em amônia, tornando o nitrogênio acessível aos produtores primários." },
@@ -432,6 +458,7 @@
         let currentQuestions = [];
         let studentAnswers = {};
         let currentStudent = null;
+        const backendUrl = 'https://script.google.com/macros/s/AKfycbzF_X9dfIL4yOEO760j8dNnvVo3MFtEdVmJH3LzrNK7ecthWhfgR190qjoOSoYozsZh/exec';
 
         // Função para inicializar a página
         function initializePage() {
@@ -555,7 +582,7 @@
             // Exibir resultados
             showResults(score);
             
-            // Enviar para o Google Sheets (simulado)
+            // Enviar para o Google Sheets
             sendToGoogleSheets(score);
         }
 
@@ -585,17 +612,50 @@
             window.scrollTo(0, document.body.scrollHeight);
         }
 
-        // Função para enviar dados para o Google Sheets (simulada)
+        // Função para enviar dados para o Google Sheets
         function sendToGoogleSheets(score) {
-            // Esta é uma simulação - em um ambiente real, isso seria uma chamada para o Google Apps Script
-            console.log('Enviando dados para o Google Sheets...');
-            console.log('Aluno:', currentStudent);
-            console.log('Pontuação:', score);
-            console.log('Respostas:', studentAnswers);
+            // Mostrar indicador de carregamento
+            const loadingElement = document.getElementById('loading');
+            loadingElement.style.display = 'block';
             
-            // Aqui seria feita a integração real com a planilha Google
-            // usando Google Apps Script e a API do Google Sheets
-            alert('Respostas enviadas com sucesso! Os resultados foram registrados.');
+            // Preparar dados para envio
+            const formData = new FormData();
+            
+            // Dados do aluno
+            formData.append('studentName', currentStudent.name);
+            formData.append('studentNumber', currentStudent.id);
+            formData.append('studentEmail', currentStudent.email);
+            formData.append('studentGrade', document.getElementById('student-grade').value);
+            formData.append('score', score);
+            formData.append('timestamp', new Date().toISOString());
+            
+            // Adicionar respostas
+            currentQuestions.forEach(question => {
+                const answer = studentAnswers[question.id] || 'não respondida';
+                formData.append(`question-${question.id}`, answer);
+            });
+            
+            // Enviar dados para o backend (Google Apps Script)
+            fetch(backendUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro na resposta do servidor');
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('Sucesso:', data);
+                loadingElement.style.display = 'none';
+                alert('Respostas enviadas com sucesso! Os resultados foram registrados.');
+            })
+            .catch((error) => {
+                console.error('Erro:', error);
+                loadingElement.style.display = 'none';
+                alert('Ocorreu um erro ao enviar as respostas. Tente novamente.');
+            });
         }
 
         // Inicializar a página quando carregada
@@ -603,4 +663,3 @@
     </script>
 </body>
 </html>
-

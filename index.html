@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividade de Biologia - 3º Bimestre</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(to right, #c0c0c0, #a9a9a9);
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: linear-gradient(to right, #1a2980, #26d0ce);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(255, 255, 255, 0.3);
+        }
+        
+        .school-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .activity-title {
+            text-align: center;
+            font-size: 28px;
+            margin: 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .info-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        input, select {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .question-container {
+            background: linear-gradient(to right, #1a2980, #26d0ce);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+        
+        .question {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .option {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .option:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .option input {
+            margin-right: 10px;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(to right, #1a2980, #26d0ce);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .results {
+            display: none;
+            background: linear-gradient(to right, #1a2980, #26d0ce);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            color: white;
+            text-align: center;
+        }
+        
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .feedback {
+            margin-top: 15px;
+            text-align: left;
+        }
+        
+        .correct {
+            color: #7fff00;
+        }
+        
+        .incorrect {
+            color: #ff4500;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        th {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .student-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="school-name">E.E. LYDIA KITZ MOREIRA</div>
+            <div class="student-info">
+                <div class="info-group">
+                    <label for="student-name">NOME:</label>
+                    <select id="student-name">
+                        <option value="">Selecione seu nome</option>
+                        <!-- Os nomes serão preenchidos via JavaScript -->
+                    </select>
+                </div>
+                <div class="info-group">
+                    <label for="student-number">Nº:</label>
+                    <input type="text" id="student-number" readonly>
+                </div>
+                <div class="info-group">
+                    <label for="student-grade">SÉRIE:</label>
+                    <input type="text" id="student-grade" value="1ª Série" readonly>
+                </div>
+                <div class="info-group">
+                    <label for="student-email">E-mail institucional:</label>
+                    <input type="text" id="student-email" readonly>
+                </div>
+            </div>
+            <div class="activity-title">ATIVIDADE DE BIOLOGIA (3º BIMESTRE)</div>
+            <div style="text-align: center; margin-top: 10px;">"REVISÃO DOS TEMAS"</div>
+        </header>
+
+        <div id="questions-container">
+            <!-- As questões serão inseridas aqui via JavaScript -->
+        </div>
+
+        <div class="buttons">
+            <button id="submit-btn">Enviar Respostas</button>
+        </div>
+
+        <div id="results" class="results">
+            <div class="score">Sua pontuação: <span id="score-value">0</span>/10</div>
+            <div id="feedback" class="feedback"></div>
+        </div>
+    </div>
+
+    <script>
+        // Dados dos alunos
+        const students = [
+            { id: 1, name: "ALEXANDRE BATISTA DOS SANTOS", email: "00001141439785SP@al.educacao.sp.gov.br" },
+            { id: 5, name: "ANA LÍVIA BRAGA DOS SANTOS", email: "00001122248246SP@al.educacao.sp.gov.br" },
+            { id: 7, name: "ARTHUR CASTRO SILVA", email: "00001122238228SP@al.educacao.sp.gov.br" },
+            { id: 11, name: "DANIELLE OLIVEIRA DA SILVA NUNES", email: "00001122096756SP@al.educacao.sp.gov.br" },
+            { id: 14, name: "ELOYSA ANDRADE OLIVEIRA SILVA", email: "00001103565242SP@al.educacao.sp.gov.br" },
+            { id: 18, name: "FELIPE MARCONDES SILVA", email: "0000112225538XSP@al.educacao.sp.gov.br" },
+            { id: 19, name: "GEOVANA FERREIRA DA SILVA SOUZA", email: "00001111268939SP@al.educacao.sp.gov.br" },
+            { id: 20, name: "GEOVANNA GABRIELA PIERRE SILVA", email: "00001122198954SP@al.educacao.sp.gov.br" },
+            { id: 24, name: "ISAAK ALVAREZ MARQUEZ CAETANO", email: "00001141664471SP@al.educacao.sp.gov.br" },
+            { id: 30, name: "KAMILA NEVES BRITO", email: "00001122109829SP@al.educacao.sp.gov.br" },
+            { id: 33, name: "KEMILLY VITORIA RODRIGUES MARIANO", email: "00001122119781SP@al.educacao.sp.gov.br" },
+            { id: 34, name: "LAURA LUIZA DOS SANTOS ALMEIDA", email: "00001141686442SP@al.educacao.sp.gov.br" },
+            { id: 37, name: "MARIA EDUARDA VENCESLAU DE SOUZA", email: "00001123918867SP@al.educacao.sp.gov.br" },
+            { id: 38, name: "MATHEUS CAVALCANTE LISBOA", email: "00001122175759SP@al.educacao.sp.gov.br" },
+            { id: 40, name: "MURILLO SOUZA RODRIGUES DOS SANTOS", email: "00001122296228SP@al.educacao.sp.gov.br" },
+            { id: 45, name: "PEDRO HENRIQUE MAURICIO DA SILVA CHAGAS", email: "00001140937571SP@al.educacao.sp.gov.br" },
+            { id: 48, name: "RHUAN LIMA OLIVEIRA", email: "00001122272169SP@al.educacao.sp.gov.br" },
+            { id: 49, name: "THAINA FIDELIS XAVIER DA SILVA", email: "00001122229148SP@al.educacao.sp.gov.br" },
+            { id: 54, name: "DENIS CASTRO DURVALDO", email: "00001132474152SP@al.educacao.sp.gov.br" },
+            { id: 56, name: "ISAAC LEMOS SANTOS", email: "00001141548744SP@al.educacao.sp.gov.br" },
+            { id: 57, name: "EMILLY EDUARDA BONIFACIO DE AMORIM CORREA", email: "00001141568111SP@al.educacao.sp.gov.br" },
+            { id: 58, name: "RAYSSA GUBEREV FRAGA", email: "00001114029373SP@al.educacao.sp.gov.br" },
+            { id: 59, name: "LEONARDO ABADE DA SILVA DANTAS", email: "0000114154104XSP@al.educacao.sp.gov.br" },
+            { id: 61, name: "MILENA CRISTINA LOPES DE CARVALHO", email: "00001122201436SP@al.educacao.sp.gov.br" },
+            { id: 62, name: "PYETRA GOMES MARTINS", email: "00001141681717SP@al.educacao.sp.gov.br" },
+            { id: 63, name: "MIRELLA BRITO DA SILVA", email: "00001122266224SP@al.educacao.sp.gov.br" },
+            { id: 64, name: "CARLOS EDUARDO MARTINS DA SILVA", email: "00001141492003SP@al.educacao.sp.gov.br" },
+            { id: 66, name: "STELLA MARTINS DA SILVA", email: "0000112231937XSP@al.educacao.sp.gov.br" },
+            { id: 67, name: "DYESSICA MAYARA DOS SANTOS GOMES", email: "00001141700888SP@al.educacao.sp.gov.br" },
+            { id: 68, name: "LARISSA DE LOURDES DOS SANTOS", email: "00001122136869SP@al.educacao.sp.gov.br" },
+            { id: 70, name: "GUSTAVO RODRIGUES DE SOUZA", email: "00001132106084SP@al.educacao.sp.gov.br" },
+            { id: 71, name: "PAULO HENRIQUE SOUZA MARTELO", email: "00001141508576SP@al.educacao.sp.gov.br" },
+            { id: 72, name: "NAYARA BARROS DE MORAIS", email: "00001141532232SP@al.educacao.sp.gov.br" },
+            { id: 73, name: "VITÓRIA SANTOS TEIXEIRA", email: "00001111267923SP@al.educacao.sp.gov.br" },
+            { id: 74, name: "BRUNA VITORIA DA MOTA OLIVEIRA", email: "00001104893149SP@al.educacao.sp.gov.br" },
+            { id: 75, name: "JOÃO PAULO RODRIGUES DE SOUZA FILHO", email: "00001122178013SP@al.educacao.sp.gov.br" },
+            { id: 76, name: "MARIA EDUARDA DE OLIVEIRA RODRIGUES", email: "00001122177574SP@al.educacao.sp.gov.br" },
+            { id: 77, name: "LUIZ HENRIQUE JESUS DOS SANTOS FABRICIO", email: "00001101285746SP@al.educacao.sp.gov.br" },
+            { id: 78, name: "EDUARDO CARRASCOSA PINTOR", email: "00001132133828SP@al.educacao.sp.gov.br" },
+            { id: 79, name: "GUILHERME DANIEL VELOSO DOS SANTOS", email: "00001132176281SP@al.educacao.sp.gov.br" },
+            { id: 80, name: "JOAO GABRIEL AMORIM TOBIAS", email: "00001141428611SP@al.educacao.sp.gov.br" },
+            { id: 81, name: "RIAN SANTOS MACHADO", email: "00001132118074SP@al.educacao.sp.gov.br" },
+            { id: 82, name: "JULIA ARAUJO DE LIMA", email: "00001101366886SP@al.educacao.sp.gov.br" }
+        ];
+
+        // Banco de questões (10 questões com enunciados mais extensos)
+        const allQuestions = [
+            {
+                id: 1,
+                question: "Em um ecossistema de Mata Atlântica, pesquisadores estudaram as interações entre produtores, consumidores e decompositores. Eles observaram que as teias alimentares eram complexas, com múltiplas conexões entre diferentes espécies. Considerando o fluxo de energia nesse ecossistema, qual das seguintes afirmações melhor explica por que a quantidade de energia disponível diminui a cada nível trófico?",
+                options: [
+                    { id: "a", text: "A energia é perdida principalmente na forma de calor durante os processos metabólicos, como a respiração celular, que ocorre em todos os organismos." },
+                    { id: "b", text: "Os decompositores consomem a maior parte da energia antes que ela possa ser transferida para os níveis tróficos superiores." },
+                    { id: "c", text: "Os produtores retêm a maior parte da energia para seu próprio crescimento e manutenção, transferindo apenas uma pequena fração." },
+                    { id: "d", text: "A energia é perdida devido à competição interespecífica dentro de cada nível trófico, reduzindo a eficiência da transferência." }
+                ],
+                correct: "a",
+                skill: "EM13CNT105",
+                explanation: "A segunda lei da termodinâmica explica que em cada transformação de energia, parte dela é dissipada na forma de calor. Nos ecossistemas, isso ocorre principalmente através da respiração celular, onde apenas uma parte da energia é convertida em biomassa, enquanto o restante é perdido como calor, limitando a quantidade de energia disponível para os níveis tróficos superiores."
+            },
+            {
+                id: 2,
+                question: "O ciclo do carbono é fundamental para a manutenção da vida na Terra. Durante uma aula de campo, estudantes observaram diferentes processos envolvidos neste ciclo. Considerando as atividades humanas contemporâneas, qual das seguintes alternativas representa o impacto mais significativo no aumento da concentração de CO₂ atmosférico?",
+                options: [
+                    { id: "a", text: "A decomposição da matéria orgânica em aterros sanitários e a fermentação entérica em rebanhos bovinos." },
+                    { id: "b", text: "A queima de combustíveis fósseis e as mudanças no uso do solo, como o desmatamento de florestas tropicais." },
+                    { id: "c", text: "A respiração aeróbica de todos os organismos heterotróficos e a liberação de carbono durante erupções vulcânicas." },
+                    { id: "d", text: "A produção de cimento e a aplicação de fertilizantes nitrogenados na agricultura intensiva." }
+                ],
+                correct: "b",
+                skill: "EM13CNT105",
+                explanation: "A queima de combustíveis fósseis (carvão, petróleo e gás natural) libera grandes quantidades de carbono que estavam armazenadas há milhões de anos. O desmatamento, especialmente de florestas tropicais, reduz a capacidade de sequestro de carbono pela fotossíntese. Juntos, esses fatores representam as principais contribuições humanas para o aumento do CO₂ atmosférico."
+            },
+            {
+                id: 3,
+                question: "Em uma investigação sobre o ciclo do nitrogênio, um grupo de alunos analisou o papel de diferentes microorganismos. Eles descobriram que certas bactérias realizam processos essenciais para converter o nitrogênio atmosférico em formas utilizáveis pelas plantas. Qual das seguintes afirmações melhor descreve a importância ecológica da fixação biológica de nitrogênio?",
+                options: [
+                    { id: "a", text: "As bactérias nitrificantes convertem amônia em nitrito e depois em nitrato, formas mais facilmente absorvidas pelas raízes das plantas." },
+                    { id: "b", text: "As cianobactérias e rizóbios convertem o N₂ atmosférico em amônia, tornando o nitrogênio acessível aos produtores primários." },
+                    { id: "c", text: "Os fungos micorrízicos estabelecem simbiose com plantas, facilitando a absorção de compostos nitrogenados do solo." },
+                    { id: "d", text: "As bactérias desnitrificantes devolvem o nitrogênio à atmosfera, completando o ciclo e mantendo o equilíbrio ecológico." }
+                ],
+                correct: "b",
+                skill: "EM13CNT105",
+                explanation: "A fixação biológica de nitrogênio é realizada por bactérias especializadas (como rizóbios em simbiose com leguminosas) e cianobactérias. Esses organismos convertem o nitrogênio atmosférico (N₂) em amônia (NH₃), que pode ser utilizada pelas plantas para sintetizar aminoácidos e nucleotídeos. Esse processo é fundamental porque o N₂ atmosférico é inacessível para a maioria dos seres vivos."
+            },
+            {
+                id: 4,
+                question: "Um agricultor está decidindo entre usar fertilizantes orgânicos ou inorgânicos em sua plantação. Ele considera fatores como impacto ambiental, custo-benefício e efeitos a longo prazo na saúde do solo. Qual das seguintes vantagens está mais associada ao uso de fertilizantes orgânicos em comparação com os inorgânicos?",
+                options: [
+                    { id: "a", text: "Liberação imediata e concentrada de nutrientes, permitindo correção rápida de deficiências nutricionais nas plantas." },
+                    { id: "b", text: "Maior facilidade de aplicação e dosagem precisa dos macronutrientes necessários para o crescimento vegetal." },
+                    { id: "c", text: "Melhoria da estrutura do solo, aumento da capacidade de retenção de água e estímulo à atividade microbiana benéfica." },
+                    { id: "d", text: "Maior concentração de nutrientes por unidade de peso, reduzindo custos de transporte e armazenamento." }
+                ],
+                correct: "c",
+                skill: "EM13CNT105",
+                explanation: "Fertilizantes orgânicos, como esterco, composto e adubo verde, melhoram a estrutura física do solo, aumentam sua capacidade de reter água e nutrientes, e fornecem alimento para microorganismos benéficos. Esses aspectos contribuem para a saúde do solo a longo prazo, diferente dos fertilizantes inorgânicos que fornecem nutrientes de forma mais imediata, mas não melhoram as propriedades físicas e biológicas do solo."
+            },
+            {
+                id: 5,
+                question: "A eutrofização é um processo que ocorre em ecossistemas aquáticos quando há excesso de nutrientes, principalmente nitrogênio e fósforo. Durante uma pesquisa em um lago eutrofizado, cientistas observaram uma série de alterações. Qual das seguintes sequências melhor descreve os eventos típicos do processo de eutrofização?",
+                options: [
+                    { id: "a", text: "Aumento de nutrientes → proliferação de algas → bloqueio da luz solar → morte de plantas aquáticas → decomposição → consumo de oxigênio → morte de peixes." },
+                    { id: "b", text: "Aumento de temperatura → aceleração do metabolismo → maior consumo de oxigênio → morte de organismos sensíveis → liberação de toxinas → redução da biodiversidade." },
+                    { id: "c", text: "Acidificação da água → dissolução de metais pesados → toxicidade para organismos aquáticos → bioacumulação → desequilíbrio ecológico." },
+                    { id: "d", text: "Acúmulo de sedimentos → assoreamento → redução da profundidade → aumento da temperatura → alteração nas comunidades biológicas." }
+                ],
+                correct: "a",
+                skill: "EM13CNT105",
+                explanation: "A eutrofização inicia-se com o excesso de nutrientes (especialmente fósforo e nitrogênio) que estimula o crescimento excessivo de algas. Essas algas formam uma camada na superfície que bloqueia a luz solar, impedindo a fotossíntese de plantas subaquáticas que acabam morrendo. Na decomposição dessa matéria orgânica, bactérias aeróbicas consomem o oxigênio dissolvido, podendo levar à hipoxia (baixo oxigênio) e morte de peixes e outros organismos aeróbicos."
+            },
+            {
+                id: 6,
+                question: "Em uma aula prática sobre fotossíntese, alunos investigaram como diferentes fatores ambientais afetam a taxa desse processo. Eles montaram um experimento com plantas aquáticas e observaram a liberação de bolhas de oxigênio sob diferentes condições. Qual das seguintes variáveis afeta diretamente a fase fotoquímica da fotossíntese?",
+                options: [
+                    { id: "a", text: "A disponibilidade de CO₂ no meio, que é o substrato principal para a fixação de carbono no ciclo de Calvin." },
+                    { id: "b", text: "A concentração de ATP e NADPH, que são produtos da fase clara e essenciais para as reações de fixação de carbono." },
+                    { id: "c", text: "A intensidade luminosa, que fornece a energia necessária para excitar elétrons e iniciar o transporte de elétrons fotossintético." },
+                    { id: "d", text: "A temperatura do ambiente, que influencia a atividade enzimática envolvida nas reações bioquímicas do processo." }
+                ],
+                correct: "c",
+                skill: "EM13CNT105",
+                explanation: "A fase fotoquímica (ou fase clara) da fotossíntese depende diretamente da luz, que é absorvida por pigmentos fotossintéticos como a clorofila. A energia luminosa excita elétrons que iniciam uma cadeia transportadora de elétrons, resultando na produção de ATP e NADPH. Estas moléculas energéticas são então utilizadas na fase escura (Ciclo de Calvin) para fixar o CO₂ e produzir carboidratos."
+            },
+            {
+                id: 7,
+                question: "O aquecimento global tem impactado significativamente os ecossistemas marinhos. Pesquisadores estudam os efeitos do aumento de CO₂ atmosférico nos oceanos, incluindo a acidificação. Qual das seguintes afirmações melhor explica a relação entre o aumento de CO₂ atmosférico e a acidificação dos oceanos?",
+                options: [
+                    { id: "a", text: "O CO₂ atmosférico dissolve-se diretamente na água do mar, formando ácido carbônico que diminui o pH oceânico." },
+                    { id: "b", text: "O aumento da temperatura global acelera a decomposição da matéria orgânica nos oceanos, liberando ácidos orgânicos." },
+                    { id: "c", text: "O derretimento das calotas polares libera água doce com pH naturalmente mais ácido, alterando a química oceânica." },
+                    { id: "d", text: "As chuvas ácidas, resultantes da poluição industrial, são a principal causa da acidificação dos oceanos." }
+                ],
+                correct: "a",
+                skill: "EM13CNT105",
+                explanation: "Cerca de 30% do CO₂ liberado na atmosfera pelas atividades humanas é absorvido pelos oceanos. Quando o CO₂ se dissolve na água do mar, ele reage com as moléculas de água formando ácido carbônico (H₂CO₃), que subsequentemente se dissocia em íons bicarbonato (HCO₃⁻) e hidrogênio (H⁺). O aumento na concentração de íons H⁺ diminui o pH da água do mar, tornando-a mais ácida. Este processo tem implicações sérias para organismos marinhos que constroem estruturas de carbonato de cálcio, como corais e moluscos."
+            },
+            {
+                id: 8,
+                question: "Em um ecossistema de cerrado, pesquisadores estudaram as adaptações das plantas às condições de solo ácido e pobre em nutrientes. Eles observaram que muitas plantas desenvolveram estratégias específicas para obter nutrientes. Qual das seguintes adaptações está mais diretamente relacionada à aquisição de fósforo em solos com pH baixo?",
+                options: [
+                    { id: "a", text: "A formação de raízes aéreas que absorvem nutrientes diretamente da atmosfera através de finas películas radiculares." },
+                    { id: "b", text: "O estabelecimento de associações simbióticas com fungos micorrízicos que aumentam a superfície de absorção radicular." },
+                    { id: "c", text: "A produção de compostos alelopáticos que inibem a crescimento de plantas competidoras, reduzindo a competição por recursos." },
+                    { id: "d", text: "O desenvolvimento de tricomas foliares especializados na absorção de nutrientes a partir da água da chuva." }
+                ],
+                correct: "b",
+                skill: "EM13CNT105",
+                explanation: "Em solos ácidos, o fósforo forma compostos insolúveis com ferro e alumínio, tornando-se pouco disponível para as plantas. As micorrizas são associações simbióticas entre raízes e fungos, onde os fungos aumentam drasticamente a área de absorção do sistema radicular. Os filamentos do fungo (hifas) podem acessar formas de fósforo inacessíveis às raízes, absorvê-lo e transferi-lo para a planta em troca de carboidratos. Esta é uma adaptação crucial em solos pobres em nutrientes como os do cerrado."
+            },
+            {
+                id: 9,
+                question: "A respiração celular é um processo fundamental para a produção de energia nos organismos aeróbicos. Em uma aula de laboratório, estudantes compararam a eficiência energética da respiração aeróbica com a fermentação. Qual das seguintes afirmações melhor explica a vantagem da respiração aeróbica em termos de produção de ATP?",
+                options: [
+                    { id: "a", text: "A respiração aeróbica utiliza uma variedade maior de substratos energéticos, incluindo carboidratos, lipídios e proteínas." },
+                    { id: "b", text: "O oxigênio atua como aceptor final de elétrons de alto potencial redutor, permitindo a completa oxidação da glicose e máxima produção de ATP." },
+                    { id: "c", text: "As enzimas envolvidas na respiração aeróbica têm maior afinidade pelos seus substratos, acelerando as reações metabólicas." },
+                    { id: "d", text: "A respiração aeróbica produz intermediários metabólicos que podem ser utilizados em outras vias biossintéticas, aumentando a eficiência celular." }
+                ],
+                correct: "b",
+                skill: "EM13CNT105",
+                explanation: "A principal vantagem da respiração aeróbica é a utilização do oxigênio como aceptor final de elétrons na cadeia transportadora de elétrons. Isto permite a completa oxidação da glicose a CO₂ e H₂O, com produção de até 36-38 ATP por molécula de glicose. Em contraste, a fermentação não utiliza a cadeia transportadora de elétrons nem oxigênio como aceptor final, resultando na produção de apenas 2 ATP por glicose e em compostos orgânicos parciais como lactato ou etanol."
+            },
+            {
+                id: 10,
+                question: "A biodiversidade é fundamental para a resiliência dos ecossistemas. Em um estudo de longo prazo, ecólogos observaram que ecossistemas com maior diversidade de espécies tendem a ser mais estáveis e resistentes a perturbações. Qual dos seguintes mecanismos melhor explica essa relação entre biodiversidade e estabilidade ecossistêmica?",
+                options: [
+                    { id: "a", text: "O efeito de complementaridade, onde espécies diferentes utilizam recursos de maneira complementar, aumentando a eficiência geral do ecossistema." },
+                    { id: "b", text: "A hipótese de redundância funcional, onde múltiplas espécies desempenham funções similares, garantindo que o ecossistema mantenha suas funções mesmo com a perda de algumas espécies." },
+                    { id: "c", text: "O aumento da competição interespecífica em ecossistemas diversos, que seleciona organismos mais eficientes e adaptados às condições ambientais." },
+                    { id: "d", text: "A maior probabilidade de que ecossistemas diversos contenham espécies chave com influência desproporcional sobre a estrutura comunitária." }
+                ],
+                correct: "b",
+                skill: "EM13CNT105",
+                explanation: "A hipótese de redundância funcional sugere que em ecossistemas com alta biodiversidade, múltiplas espécies podem desempenhar funções ecológicas similares (como fixação de nitrogênio, decomposição ou fotossíntese). Se uma espécie é perdida devido a uma perturbação ambiental, outras espécies com funções similares podem compensar essa perda, mantendo o funcionamento do ecossistema. Este 'efeito seguro' aumenta a resiliência e estabilidade dos ecossistemas biodiversos."
+            }
+        ];
+
+        // Variáveis globais
+        let currentQuestions = [];
+        let studentAnswers = {};
+        let currentStudent = null;
+
+        // Função para inicializar a página
+        function initializePage() {
+            // Preencher dropdown de alunos
+            const studentSelect = document.getElementById('student-name');
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.id;
+                option.textContent = student.name;
+                studentSelect.appendChild(option);
+            });
+
+            // Adicionar evento de change ao select
+            studentSelect.addEventListener('change', function() {
+                const studentId = this.value;
+                currentStudent = students.find(s => s.id == studentId);
+                
+                if (currentStudent) {
+                    document.getElementById('student-number').value = currentStudent.id;
+                    document.getElementById('student-email').value = currentStudent.email;
+                }
+            });
+
+            // Exibir questões
+            loadQuestions();
+
+            // Adicionar eventos aos botões
+            document.getElementById('submit-btn').addEventListener('click', submitAnswers);
+        }
+
+        // Função para carregar questões
+        function loadQuestions() {
+            // Usar todas as 10 questões
+            currentQuestions = [...allQuestions];
+            
+            // Renderizar questões
+            renderQuestions();
+        }
+
+        // Função para renderizar questões
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+            
+            currentQuestions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                
+                let questionHTML = `
+                    <div class="question">
+                        <div class="question-text">${index + 1}. ${question.question}</div>
+                `;
+                
+                // Embaralhar opções
+                const shuffledOptions = shuffleArray([...question.options]);
+                
+                questionHTML += `
+                    <div class="options">
+                `;
+                
+                shuffledOptions.forEach(option => {
+                    questionHTML += `
+                        <label class="option">
+                            <input type="radio" name="question-${question.id}" value="${option.id}">
+                            ${option.text}
+                        </label>
+                    `;
+                });
+                
+                questionHTML += `
+                    </div>
+                    </div>
+                `;
+                
+                questionDiv.innerHTML = questionHTML;
+                container.appendChild(questionDiv);
+            });
+            
+            // Reiniciar respostas
+            studentAnswers = {};
+        }
+
+        // Função para embaralhar array (Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Função para enviar respostas
+        function submitAnswers() {
+            if (!currentStudent) {
+                alert('Por favor, selecione seu nome antes de enviar.');
+                return;
+            }
+            
+            // Coletar respostas
+            currentQuestions.forEach(question => {
+                const selectedOption = document.querySelector(`input[name="question-${question.id}"]:checked`);
+                studentAnswers[question.id] = selectedOption ? selectedOption.value : null;
+            });
+            
+            // Verificar se todas as questões foram respondidas
+            const unanswered = Object.values(studentAnswers).filter(answer => answer === null).length;
+            if (unanswered > 0) {
+                if (!confirm(`Você deixou ${unanswered} questão(ões) sem resposta. Deseja enviar mesmo assim?`)) {
+                    return;
+                }
+            }
+            
+            // Calcular pontuação
+            let score = 0;
+            currentQuestions.forEach(question => {
+                if (studentAnswers[question.id] === question.correct) {
+                    score++;
+                }
+            });
+            
+            // Exibir resultados
+            showResults(score);
+            
+            // Enviar para o Google Sheets (simulado)
+            sendToGoogleSheets(score);
+        }
+
+        // Função para exibir resultados
+        function showResults(score) {
+            const resultsDiv = document.getElementById('results');
+            const scoreSpan = document.getElementById('score-value');
+            const feedbackDiv = document.getElementById('feedback');
+            
+            scoreSpan.textContent = score;
+            feedbackDiv.innerHTML = '';
+            
+            // Adicionar feedback para cada questão
+            currentQuestions.forEach((question, index) => {
+                const userAnswer = studentAnswers[question.id];
+                const isCorrect = userAnswer === question.correct;
+                
+                feedbackDiv.innerHTML += `
+                    <div class="question-feedback">
+                        <p><strong>Questão ${index + 1}:</strong> ${isCorrect ? '<span class="correct">✓ Correta</span>' : '<span class="incorrect">✗ Incorreta</span>'}</p>
+                        ${!isCorrect ? `<p class="explanation">${question.explanation}</p>` : ''}
+                    </div>
+                `;
+            });
+            
+            resultsDiv.style.display = 'block';
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        // Função para enviar dados para o Google Sheets (simulada)
+        function sendToGoogleSheets(score) {
+            // Esta é uma simulação - em um ambiente real, isso seria uma chamada para o Google Apps Script
+            console.log('Enviando dados para o Google Sheets...');
+            console.log('Aluno:', currentStudent);
+            console.log('Pontuação:', score);
+            console.log('Respostas:', studentAnswers);
+            
+            // Aqui seria feita a integração real com a planilha Google
+            // usando Google Apps Script e a API do Google Sheets
+            alert('Respostas enviadas com sucesso! Os resultados foram registrados.');
+        }
+
+        // Inicializar a página quando carregada
+        window.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>
+

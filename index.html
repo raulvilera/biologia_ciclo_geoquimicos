@@ -258,7 +258,7 @@ const allQuestions = [
 
 /* === CONFIGURAÇÕES === */
 /* Substitua esta URL pelo seu WebApp do Apps Script (terminando em /exec) */
-const backendUrl = 'https://script.google.com/macros/s/AKfycbxzm5aFOunrMh_cZUxsCNoJee96szpi9le8UVAh6qglFjsk0i-4eb4jg53HfyUdrxV5/exec';
+const backendUrl = 'https://script.google.com/macros/s/AKfycbynH1Y_qXOmwUbydfXnL9qqRYMW0PaoV3LnSmSbqnOAhjwMnECrWPKh0XDv9F7SbQfQ/exec';
 
 /* === RENDERIZAÇÃO E LÓGICA === */
 let studentAnswers = {};
@@ -336,7 +336,7 @@ async function onSubmit(){
   document.getElementById('submit-btn').disabled = true;
 
   try{
-    const res = await fetch(backendUrl, {
+    const res = await fetch('https://script.google.com/macros/s/AKfycbynH1Y_qXOmwUbydfXnL9qqRYMW0PaoV3LnSmSbqnOAhjwMnECrWPKh0XDv9F7SbQfQ/exec', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify(payload)
@@ -423,4 +423,5 @@ window.addEventListener('DOMContentLoaded', initializePage);
 </script>
 </body>
 </html>
+
 

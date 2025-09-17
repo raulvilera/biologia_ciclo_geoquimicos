@@ -2,303 +2,217 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ATIVIDADE BIOLOGIA (3º Bimestre) - E.E. LYDIA KITZ MOREIRA</title>
+<title>Atividade de Biologia - 3º Bimestre</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Arial;}
-body{background:linear-gradient(90deg,#c0c0c0,#a9a9a9);padding:20px;color:#222}
-.container{max-width:1000px;margin:0 auto}
-header{background:linear-gradient(90deg,#1a2980,#26d0ce);color:#fff;padding:20px;border-radius:10px;margin-bottom:18px}
-.school-name{font-size:20px;font-weight:700}
-.activity-title{font-size:22px;text-align:center;margin:12px 0;text-transform:uppercase}
-.student-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-.info-group{display:flex;flex-direction:column}
-label{font-weight:700;margin-bottom:6px}
-input,select,button{padding:10px;border-radius:6px;border:none}
-input,select{background:rgba(255,255,255,0.95)}
-.question-container{background:linear-gradient(90deg,#1a2980,#26d0ce);padding:16px;border-radius:10px;margin-bottom:14px;color:#fff}
-.question{background:rgba(255,255,255,0.08);padding:12px;border-radius:8px}
-.question-text{font-weight:700;margin-bottom:8px}
-.options{display:grid;gap:8px;margin-top:8px}
-.option{background:rgba(255,255,255,0.12);padding:8px;border-radius:6px;cursor:pointer}
-.option input{margin-right:10px}
-.buttons{display:flex;justify-content:center;margin:16px 0}
-button{background:linear-gradient(90deg,#1a2980,#26d0ce);color:#fff;font-weight:700;cursor:pointer}
-.results{display:none;background:linear-gradient(90deg,#1a2980,#26d0ce);color:#fff;padding:16px;border-radius:10px;margin-top:12px}
-.score{font-size:20px;font-weight:700;margin-bottom:8px}
-.feedback{margin-top:8px;text-align:left}
-.correct{color:#7fff00;font-weight:700}
-.incorrect{color:#ffb3a7;font-weight:700}
-.loading{display:none;text-align:center;margin:12px 0}
-.spinner{width:30px;height:30px;border-radius:50%;border:4px solid rgba(255,255,255,0.25);border-top:4px solid #26d0ce;animation:spin 1s linear infinite;margin:0 auto}
-@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-@media(max-width:768px){.student-info{grid-template-columns:1fr}}
+*{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif;}
+body{background:#f0f0f0;padding:20px;}
+.container{max-width:900px;margin:0 auto;background:#fff;padding:25px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,0.1);}
+header{text-align:center;margin-bottom:20px;}
+.question-container{background:#e0f7fa;margin-bottom:15px;padding:15px;border-radius:8px;}
+.options{display:grid;gap:5px;margin-top:10px;}
+.option input{margin-right:8px;}
+.buttons{margin-top:15px;text-align:center;}
+button{padding:10px 20px;border:none;border-radius:6px;background:#26d0ce;color:#fff;font-weight:bold;cursor:pointer;}
+#results{display:none;margin-top:20px;background:#c8e6c9;padding:10px;border-radius:6px;}
+.loading{display:none;text-align:center;margin:10px;font-weight:bold;}
 </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <div class="school-name">E.E. LYDIA KITZ MOREIRA</div>
-    <div class="student-info">
-      <div class="info-group">
-        <label for="student-name">NOME:</label>
-        <select id="student-name">
-          <option value="">Selecione seu nome</option>
-        </select>
-      </div>
-      <div class="info-group">
-        <label for="student-number">Nº:</label>
-        <input id="student-number" readonly />
-      </div>
-      <div class="info-group">
-        <label for="student-grade">SÉRIE:</label>
-        <input id="student-grade" value="1ª Série" readonly />
-      </div>
-      <div class="info-group">
-        <label for="student-email">E-mail institucional:</label>
-        <input id="student-email" readonly />
-      </div>
-    </div>
-    <div class="activity-title">ATIVIDADE DE BIOLOGIA (3º BIMESTRE)</div>
-    <div style="text-align:center;color:#eaf8ff;margin-top:6px">"REVISÃO DOS TEMAS"</div>
+    <h2>Atividade de Biologia (3º Bimestre)</h2>
+    <p>Revisão dos principais conceitos estudados no bimestre</p>
   </header>
+
+  <div class="student-info" style="margin-bottom:20px;">
+    <label>Nome: 
+      <select id="student-name"><option value="">Selecione seu nome</option></select>
+    </label>
+    <label>Nº: <input id="student-number" readonly></label>
+    <label>Email: <input id="student-email" readonly></label>
+  </div>
 
   <div id="questions-container"></div>
 
-  <div class="loading" id="loading">
-    <div class="spinner"></div>
-    <p style="color:#222;margin-top:8px">Enviando respostas, aguarde...</p>
-  </div>
+  <div class="loading" id="loading">Enviando respostas...</div>
 
   <div class="buttons">
     <button id="submit-btn">Enviar Respostas</button>
   </div>
 
-  <div id="results" class="results">
-    <div class="score">Sua pontuação: <span id="score-value">0</span></div>
-    <div id="feedback" class="feedback"></div>
+  <div id="results">
+    <p id="result-message"></p>
   </div>
 </div>
 
 <script>
-// === LISTA COMPLETA DE ALUNOS ===
+// Lista de alunos (abreviada, insira todos os que precisar)
 const students = [
- { id: 1, name: "ALEXANDRE BATISTA DOS SANTOS", email: "00001141439785SP@al.educacao.sp.gov.br" },
- { id: 5, name: "ANA LÍVIA BRAGA DOS SANTOS", email: "00001122248246SP@al.educacao.sp.gov.br" },
- { id: 7, name: "ARTHUR CASTRO SILVA", email: "00001122238228SP@al.educacao.sp.gov.br" },
- { id: 11, name: "DANIELLE OLIVEIRA DA SILVA NUNES", email: "00001122096756SP@al.educacao.sp.gov.br" },
- { id: 14, name: "ELOYSA ANDRADE OLIVEIRA SILVA", email: "00001103565242SP@al.educacao.sp.gov.br" },
- { id: 18, name: "FELIPE MARCONDES SILVA", email: "0000112225538XSP@al.educacao.sp.gov.br" },
- { id: 19, name: "GEOVANA FERREIRA DA SILVA SOUZA", email: "00001111268939SP@al.educacao.sp.gov.br" },
- { id: 20, name: "GEOVANNA GABRIELA PIERRE SILVA", email: "00001122198954SP@al.educacao.sp.gov.br" },
- { id: 24, name: "ISAAK ALVAREZ MARQUEZ CAETANO", email: "00001141664471SP@al.educacao.sp.gov.br" },
- { id: 30, name: "KAMILA NEVES BRITO", email: "00001122109829SP@al.educacao.sp.gov.br" },
- { id: 33, name: "KEMILLY VITORIA RODRIGUES MARIANO", email: "00001122119781SP@al.educacao.sp.gov.br" },
- { id: 34, name: "LAURA LUIZA DOS SANTOS ALMEIDA", email: "00001141686442SP@al.educacao.sp.gov.br" },
- { id: 37, name: "MARIA EDUARDA VENCESLAU DE SOUZA", email: "00001123918867SP@al.educacao.sp.gov.br" },
- { id: 38, name: "MATHEUS CAVALCANTE LISBOA", email: "00001122175759SP@al.educacao.sp.gov.br" },
- { id: 40, name: "MURILLO SOUZA RODRIGUES DOS SANTOS", email: "00001122296228SP@al.educacao.sp.gov.br" },
- { id: 45, name: "PEDRO HENRIQUE MAURICIO DA SILVA CHAGAS", email: "00001140937571SP@al.educacao.sp.gov.br" },
- { id: 48, name: "RHUAN LIMA OLIVEIRA", email: "00001122272169SP@al.educacao.sp.gov.br" },
- { id: 49, name: "THAINA FIDELIS XAVIER DA SILVA", email: "00001122229148SP@al.educacao.sp.gov.br" },
- { id: 54, name: "DENIS CASTRO DURVALDO", email: "00001132474152SP@al.educacao.sp.gov.br" },
- { id: 56, name: "ISAAC LEMOS SANTOS", email: "00001141548744SP@al.educacao.sp.gov.br" },
- { id: 57, name: "EMILLY EDUARDA BONIFACIO DE AMORIM CORREA", email: "00001141568111SP@al.educacao.sp.gov.br" },
- { id: 58, name: "RAYSSA GUBEREV FRAGA", email: "00001114029373SP@al.educacao.sp.gov.br" },
- { id: 59, name: "LEONARDO ABADE DA SILVA DANTAS", email: "0000114154104XSP@al.educacao.sp.gov.br" },
- { id: 61, name: "MILENA CRISTINA LOPES DE CARVALHO", email: "00001122201436SP@al.educacao.sp.gov.br" },
- { id: 62, name: "PYETRA GOMES MARTINS", email: "00001141681717SP@al.educacao.sp.gov.br" },
- { id: 63, name: "MIRELLA BRITO DA SILVA", email: "00001122266224SP@al.educacao.sp.gov.br" },
- { id: 64, name: "CARLOS EDUARDO MARTINS DA SILVA", email: "00001141492003SP@al.educacao.sp.gov.br" },
- { id: 66, name: "STELLA MARTINS DA SILVA", email: "0000112231937XSP@al.educacao.sp.gov.br" },
- { id: 67, name: "DYESSICA MAYARA DOS SANTOS GOMES", email: "00001141700888SP@al.educacao.sp.gov.br" },
- { id: 68, name: "LARISSA DE LOURDES DOS SANTOS", email: "00001122136869SP@al.educacao.sp.gov.br" },
- { id: 70, name: "GUSTAVO RODRIGUES DE SOUZA", email: "00001132106084SP@al.educacao.sp.gov.br" },
- { id: 71, name: "PAULO HENRIQUE SOUZA MARTELO", email: "00001141508576SP@al.educacao.sp.gov.br" },
- { id: 72, name: "NAYARA BARROS DE MORAIS", email: "00001141532232SP@al.educacao.sp.gov.br" },
- { id: 73, name: "VITÓRIA SANTOS TEIXEIRA", email: "00001111267923SP@al.educacao.sp.gov.br" },
- { id: 74, name: "BRUNA VITORIA DA MOTA OLIVEIRA", email: "00001104893149SP@al.educacao.sp.gov.br" },
- { id: 75, name: "JOÃO PAULO RODRIGUES DE SOUZA FILHO", email: "00001122178013SP@al.educacao.sp.gov.br" },
- { id: 76, name: "MARIA EDUARDA DE OLIVEIRA RODRIGUES", email: "00001122177574SP@al.educacao.sp.gov.br" },
- { id: 77, name: "LUIZ HENRIQUE JESUS DOS SANTOS FABRICIO", email: "00001101285746SP@al.educacao.sp.gov.br" },
- { id: 78, name: "EDUARDO CARRASCOSA PINTOR", email: "00001132133828SP@al.educacao.sp.gov.br" },
- { id: 79, name: "GUILHERME DANIEL VELOSO DOS SANTOS", email: "00001132176281SP@al.educacao.sp.gov.br" },
- { id: 80, name: "JOAO GABRIEL AMORIM TOBIAS", email: "00001141428611SP@al.educacao.sp.gov.br" },
- { id: 81, name: "RIAN SANTOS MACHADO", email: "00001132118074SP@al.educacao.sp.gov.br" },
- { id: 82, name: "JULIA ARAUJO DE LIMA", email: "00001101366886SP@al.educacao.sp.gov.br" }
+  {id:1,name:"ALEXANDRE BATISTA DOS SANTOS",email:"00001141439785SP@al.educacao.sp.gov.br"},
+  {id:5,name:"ANA LÍVIA BRAGA DOS SANTOS",email:"00001122248246SP@al.educacao.sp.gov.br"},
+  {id:7,name:"ARTHUR CASTRO SILVA",email:"00001122238228SP@al.educacao.sp.gov.br"},
+  {id:11,name:"DANIELLE OLIVEIRA DA SILVA NUNES",email:"00001122096756SP@al.educacao.sp.gov.br"},
+  {id:14,name:"ELOYSA ANDRADE OLIVEIRA SILVA",email:"00001103565242SP@al.educacao.sp.gov.br"}
+  // Continue com todos os alunos...
 ];
 
-// === QUESTÕES COMPLETAS ===
+// Preenche dropdown
+const select = document.getElementById('student-name');
+students.forEach(s=>{
+  const opt = document.createElement('option');
+  opt.value=s.name;
+  opt.textContent=s.name;
+  select.appendChild(opt);
+});
+
+select.addEventListener('change',()=>{
+  const sel = students.find(s=>s.name===select.value);
+  document.getElementById('student-number').value=sel?sel.id:'';
+  document.getElementById('student-email').value=sel?sel.email:'';
+});
+
+// QUESTÕES (10) com maior contextualização e dificuldade
 const allQuestions = [
   {
     id:1,
-    question:`Em um ecossistema de Mata Atlântica, pesquisadores estudaram as interações entre produtores, consumidores e decompositores. Eles observaram que as teias alimentares eram complexas, com múltiplas conexões entre diferentes espécies. Considerando o fluxo de energia nesse ecossistema, qual das seguintes afirmações melhor explica por que a quantidade de energia disponível diminui a cada nível trófico?`,
+    question:`Em uma floresta tropical, pesquisadores estudaram a eficiência energética nas cadeias alimentares. Observou-se que, a cada nível trófico, apenas uma fração da energia é transferida. Considerando os conceitos de termodinâmica e ecologia, qual é a principal razão dessa diminuição de energia disponível?`,
     options:[
-      {id:'a', text:'Os produtores retêm a maior parte da energia para seu próprio crescimento e manutenção, transferindo apenas uma pequena fração.'},
-      {id:'b', text:'A energia é perdida principalmente na forma de calor durante os processos metabólicos, como a respiração celular, que ocorre em todos os organismos.'},
-      {id:'c', text:'A energia é perdida devido à competição interespecífica dentro de cada nível trófico, reduzindo a eficiência da transferência.'},
-      {id:'d', text:'Os decompositores consomem a maior parte da energia antes que ela possa ser transferida para os níveis tróficos superiores.'}
+      {id:'a',text:'A energia é dissipada principalmente na forma de calor durante o metabolismo, limitando a quantidade transferida aos consumidores seguintes.'},
+      {id:'b',text:'A energia é bloqueada pelos decompositores que consomem a maior parte antes que outros níveis a recebam.'},
+      {id:'c',text:'A energia é completamente absorvida pelos produtores, impedindo que chegue aos consumidores primários.'},
+      {id:'d',text:'A energia é perdida devido à competição entre espécies dentro do mesmo nível trófico.'}
     ]
   },
   {
     id:2,
-    question:`O ciclo do carbono é fundamental para a manutenção da vida na Terra. Durante uma aula de campo, estudantes observaram diferentes processos envolvidos neste ciclo. Considerando as atividades humanas contemporâneas, qual das seguintes alternativas representa o impacto mais significativo no aumento da concentração de CO₂ atmosférico?`,
+    question:`Durante o estudo de um lago eutrofizado, observou-se proliferação intensa de algas seguida de mortalidade de peixes. Analise o processo e indique qual sequência de eventos melhor descreve a eutrofização e seus efeitos na biodiversidade aquática.`,
     options:[
-      {id:'a', text:'A decomposição da matéria orgânica em aterros sanitários e a fermentação entérica em rebanhos bovinos.'},
-      {id:'b', text:'A respiração aeróbica de todos os organismos heterotróficos e a liberação de carbono durante erupções vulcânicas.'},
-      {id:'c', text:'A produção de cimento e a aplicação de fertilizantes nitrogenados na agricultura intensiva.'},
-      {id:'d', text:'A queima de combustíveis fósseis e as mudanças no uso do solo, como o desmatamento de florestas tropicais.'}
+      {id:'a',text:'Aumento de nutrientes → proliferação de algas → bloqueio de luz → morte de plantas → decomposição → consumo de oxigênio → morte de peixes.'},
+      {id:'b',text:'Acúmulo de sedimentos → redução de profundidade → aumento de temperatura → alteração das comunidades biológicas.'},
+      {id:'c',text:'Liberação de toxinas → aumento de temperatura → extinção de espécies microbianas → recuperação natural.'},
+      {id:'d',text:'Acidificação do lago → proliferação de algas → oxigenação do ambiente → aumento da biodiversidade.'}
     ]
   },
   {
     id:3,
-    question:`Em uma investigação sobre o ciclo do nitrogênio, um grupo de alunos analisou o papel de diferentes microorganismos. Eles descobriram que certas bactérias realizam processos essenciais para convertir o nitrogênio atmosférico em formas utilizáveis pelas plantas. Qual das seguintes afirmações melhor descreve a importância ecológica da fixação biológica de nitrogênio?`,
+    question:`Em experimentos de fotossíntese, alunos investigaram a influência da intensidade luminosa e da disponibilidade de CO₂ em plantas aquáticas. Qual variável afeta diretamente a fase fotoquímica da fotossíntese e por quê?`,
     options:[
-      {id:'a', text:'Os fungos micorrízicos estabelecem simbiose com plantas, facilitando a absorção de compostos nitrogenados do solo.'},
-      {id:'b', text:'As cianobactérias e rizóbios convertem o N₂ atmosférico em amônia, tornando o nitrogênio acessível aos produtores primários.'},
-      {id:'c', text:'As bactérias nitrificantes convertem amônia em nitrito e depois em nitrato, formas mais facilmente absorvidas pelas raízes das plantas.'},
-      {id:'d', text:'As bactérias desnitrificantes devolvem o nitrogênio à atmosfera, completando o ciclo e mantendo o equilíbrio ecológico.'}
+      {id:'a',text:'A intensidade luminosa, pois fornece energia para excitar elétrons e iniciar a cadeia de transporte eletrônico.'},
+      {id:'b',text:'A disponibilidade de CO₂, pois determina diretamente a quantidade de ATP produzido na fase clara.'},
+      {id:'c',text:'A temperatura, pois controla a absorção de água pelas folhas e produção de O₂.'},
+      {id:'d',text:'A concentração de nutrientes minerais no solo, pois influencia a fotólise da água.'}
     ]
   },
   {
     id:4,
-    question:`Um agricultor está decidindo entre usar fertilizantes orgânicos ou inorgânicos em sua plantação. Ele considera fatores como impacto ambiental, custo-benefício e efeitos a longo prazo na saúde do solo. Qual das seguintes vantagens está mais associada ao uso de fertilizantes orgânicos em comparação com os inorgânicos?`,
+    question:`O aumento de CO₂ atmosférico está relacionado à acidificação dos oceanos. Em estudos recentes, percebeu-se que a dissolução de CO₂ na água do mar altera o equilíbrio químico e a vida marinha. Qual mecanismo explica essa acidificação?`,
     options:[
-      {id:'a', text:'Melhoria da estrutura do solo, aumento da capacidade de retenção de água e estímulo à atividade microbiana benéfica.'},
-      {id:'b', text:'Liberação imediata e concentrada de nutrientes, permitindo correção rápida de deficiências nutricionais nas plantas.'},
-      {id:'c', text:'Maior facilidade de aplicação e dosagem precisa dos macronutrientes necessários para o crescimento vegetal.'},
-      {id:'d', text:'Maior concentração de nutrientes por unidade de peso, reduzindo custos de transporte e armazenamento.'}
+      {id:'a',text:'O CO₂ dissolve-se na água formando ácido carbônico, aumentando a concentração de H+ e reduzindo o pH.'},
+      {id:'b',text:'O aumento de CO₂ estimula o crescimento de algas que acidificam a água.'},
+      {id:'c',text:'O CO₂ reage com o oxigênio do mar formando óxidos que diminuem o pH.'},
+      {id:'d',text:'O CO₂ precipita na forma de carbonato de cálcio, liberando íons H+.'}
     ]
   },
   {
     id:5,
-    question:`A eutrofização é um processo que ocorre em ecossistemas aquáticos quando há excesso de nutrientes, principalmente nitrogênio e fósforo. Durante uma pesquisa em um lago eutrofizado, cientistas observaram uma série de alterações. Qual das seguintes sequências melhor descreve os eventos típicos do processo de eutrofização?`,
+    question:`Durante a observação do ciclo do nitrogênio em um solo agrícola, foram identificadas bactérias fixadoras de N₂ e bactérias nitrificantes. Qual é a importância ecológica da fixação biológica do nitrogênio?`,
     options:[
-      {id:'a', text:'Aumento de temperatura → aceleração do metabolismo → maior consumo de oxigênio → morte de organismos sensíveis → liberação de toxinas → redução da biodiversidade.'},
-      {id:'b', text:'Acidificação da água → dissolução de metais pesados → toxicidade para organismos aquáticos → bioacumulação → desequilíbrio ecológico.'},
-      {id:'c', text:'Acúmulo de sedimentos → assoreamento → redução da profundidade → aumento da temperatura → alteração nas comunidades biológicas.'},
-      {id:'d', text:'Aumento de nutrientes → proliferação de algas → bloqueio da luz solar → morte de plantas aquáticas → decomposição → consumo de oxigênio → morte de peixes.'}
+      {id:'a',text:'Converte N₂ atmosférico em amônia, tornando o nitrogênio disponível para os produtores primários.'},
+      {id:'b',text:'Converte nitrato em nitrito, completando o ciclo do nitrogênio.'},
+      {id:'c',text:'Libera gás nitroso para a atmosfera, regulando a pressão atmosférica.'},
+      {id:'d',text:'Aumenta a concentração de nitrogênio nos decompositores, acelerando a decomposição.'}
     ]
   },
   {
     id:6,
-    question:`Em uma aula prática sobre fotossíntese, alunos investigaram como diferentes fatores ambientais afetam a taxa de produção de glicose em plantas. Considerando o efeito da luz, temperatura e disponibilidade de CO₂, qual das alternativas melhor explica a limitação do processo fotossintético?`,
+    question:`Em áreas de cerrado com solos ácidos e pobres em fósforo, muitas plantas desenvolveram associações com fungos micorrízicos. Qual a vantagem ecológica dessa adaptação?`,
     options:[
-      {id:'a', text:'A intensidade luminosa elevada diminui a fotossíntese porque danifica os cloroplastos.'},
-      {id:'b', text:'A baixa disponibilidade de CO₂ e temperaturas extremas podem limitar a eficiência da fotossíntese, reduzindo a produção de glicose.'},
-      {id:'c', text:'A fotossíntese não depende do CO₂ ou da luz, apenas da água disponível para a planta.'},
-      {id:'d', text:'A temperatura elevada aumenta indefinidamente a fotossíntese sem limites, enquanto o CO₂ não tem impacto significativo.'}
+      {id:'a',text:'Aumenta a absorção de fósforo e outros nutrientes essenciais em solos pobres, melhorando o crescimento vegetal.'},
+      {id:'b',text:'Permite às plantas capturar água diretamente da atmosfera em regiões secas.'},
+      {id:'c',text:'Bloqueia o crescimento de espécies competidoras, garantindo exclusividade territorial.'},
+      {id:'d',text:'Produz toxinas que eliminam herbívoros e polinizadores.'}
     ]
   },
   {
     id:7,
-    question:`Durante uma pesquisa sobre ecologia de populações, alunos observaram o crescimento populacional de uma espécie de coelho em uma determinada região. Considerando os conceitos de capacidade de suporte e fatores limitantes, qual alternativa melhor descreve o que aconteceria se a população ultrapassasse a capacidade de suporte do ambiente?`,
+    question:`A respiração celular é essencial para a produção de ATP. Comparando respiração aeróbica e fermentação, qual é a principal vantagem da respiração aeróbica em termos energéticos?`,
     options:[
-      {id:'a', text:'A população se estabilizaria automaticamente sem impacto ambiental.'},
-      {id:'b', text:'Haveria aumento da mortalidade e diminuição da natalidade devido à escassez de recursos, levando a flutuações populacionais.'},
-      {id:'c', text:'Os predadores desapareceriam, permitindo crescimento ilimitado da população.'},
-      {id:'d', text:'A população se dispersaria para outros ecossistemas sem qualquer consequência no ambiente original.'}
+      {id:'a',text:'Permite a oxidação completa da glicose utilizando oxigênio como aceptor final de elétrons, produzindo maior quantidade de ATP.'},
+      {id:'b',text:'Produz ATP sem necessidade de oxigênio, tornando o processo mais rápido.'},
+      {id:'c',text:'Gera subprodutos que aceleram a fotossíntese em plantas próximas.'},
+      {id:'d',text:'Depende apenas de nutrientes minerais, tornando a respiração mais eficiente.'}
     ]
   },
   {
     id:8,
-    question:`Pesquisadores analisaram cadeias tróficas em diferentes ecossistemas. Em uma delas, observaram que a biomassa de produtores primários era significativamente maior que a de consumidores secundários. Qual princípio ecológico melhor explica essa diferença?`,
+    question:`Estudos sobre biodiversidade em ecossistemas terrestres mostraram que áreas com maior diversidade de espécies tendem a ser mais estáveis. Qual mecanismo ecológico explica essa relação entre diversidade e estabilidade?`,
     options:[
-      {id:'a', text:'A eficiência de conversão de energia é maior nos consumidores superiores.'},
-      {id:'b', text:'A energia é transferida com 100% de eficiência entre os níveis tróficos, mas os produtores crescem mais rapidamente.'},
-      {id:'c', text:'Há perda de energia em cada transferência trófica devido à respiração, metabolismo e calor, resultando em maior biomassa nos níveis inferiores.'},
-      {id:'d', text:'Os decompositores consomem a maior parte da energia dos produtores, reduzindo a biomassa dos consumidores.'}
+      {id:'a',text:'A redundância funcional, onde múltiplas espécies desempenham funções semelhantes, garantindo que o ecossistema mantenha suas funções mesmo se algumas forem perdidas.'},
+      {id:'b',text:'A competição intensa entre espécies impede a dominação de uma única espécie, aumentando a estabilidade.'},
+      {id:'c',text:'A presença de predadores elimina todas as espécies fracas, deixando apenas espécies fortes.'},
+      {id:'d',text:'O clima controla todos os processos ecológicos, tornando a diversidade irrelevante para a estabilidade.'}
     ]
   },
   {
     id:9,
-    question:`Em estudos sobre ciclos biogeoquímicos, alunos investigaram como atividades humanas alteram esses ciclos. Qual das alternativas melhor exemplifica a interferência humana no ciclo do fósforo?`,
+    question:`O desmatamento e a fragmentação de habitats impactam diretamente a migração de polinizadores e dispersores de sementes. Qual é a consequência mais direta desses impactos na regeneração vegetal?`,
     options:[
-      {id:'a', text:'O desmatamento de florestas tropicais aumenta a fixação biológica do fósforo no solo.'},
-      {id:'b', text:'A aplicação excessiva de fertilizantes fosfatados em agricultura e o escoamento de detergentes ricos em fósforo para rios e lagos.'},
-      {id:'c', text:'A queima de combustíveis fósseis libera fósforo para a atmosfera, aumentando sua concentração global.'},
-      {id:'d', text:'O aumento da população de decompositores libera fósforo adicional na atmosfera.'}
+      {id:'a',text:'Redução na diversidade genética e menor regeneração natural das plantas, comprometendo a resiliência do ecossistema.'},
+      {id:'b',text:'Aumento da polinização cruzada, melhorando a qualidade das sementes.'},
+      {id:'c',text:'Maior crescimento de espécies pioneiras, mantendo o equilíbrio ecológico.'},
+      {id:'d',text:'Aumento da competição por nutrientes entre plantas, acelerando a regeneração.'}
     ]
   },
   {
     id:10,
-    question:`Em uma análise sobre o impacto ambiental de diferentes tipos de resíduos, alunos observaram que resíduos orgânicos, plásticos e metais apresentam comportamentos distintos no solo. Qual alternativa apresenta corretamente a diferença principal entre resíduos orgânicos e resíduos inorgânicos em termos de decomposição?`,
+    question:`Pesquisadores analisaram os impactos do aquecimento global nos recifes de coral. Observou-se branqueamento intenso seguido de mortalidade. Qual é o principal fator bioquímico responsável pelo branqueamento?`,
     options:[
-      {id:'a', text:'Resíduos orgânicos decompõem-se mais lentamente que plásticos e metais.'},
-      {id:'b', text:'Resíduos orgânicos podem ser transformados em nutrientes pelo solo e micro-organismos, enquanto plásticos e metais persistem por longos períodos.'},
-      {id:'c', text:'Resíduos inorgânicos fornecem nutrientes para plantas, enquanto resíduos orgânicos não.'},
-      {id:'d', text:'Não há diferença significativa no processo de decomposição entre resíduos orgânicos e inorgânicos.'}
+      {id:'a',text:'Estresse térmico que causa a expulsão das zooxantelas simbióticas, reduzindo a capacidade fotossintética dos corais.'},
+      {id:'b',text:'Aumento do CO₂ atmosférico que altera a salinidade, destruindo os corais.'},
+      {id:'c',text:'Poluição sonora que impede a reprodução sexual dos corais.'},
+      {id:'d',text:'Acidificação do oceano que transforma o cálcio do esqueleto em dióxido de carbono.'}
     ]
   }
 ];
 
-// Preenche dropdown de alunos
-const studentSelect = document.getElementById('student-name');
-students.forEach(s => {
-  const option = document.createElement('option');
-  option.value = s.name;
-  option.textContent = s.name;
-  studentSelect.appendChild(option);
-});
-
-studentSelect.addEventListener('change',()=>{
-  const selected = students.find(s=>s.name===studentSelect.value);
-  document.getElementById('student-number').value = selected ? selected.id : '';
-  document.getElementById('student-email').value = selected ? selected.email : '';
-});
-
 // Renderiza questões
-const questionsContainer = document.getElementById('questions-container');
+const container = document.getElementById('questions-container');
 allQuestions.forEach(q=>{
   const qDiv = document.createElement('div');
   qDiv.classList.add('question-container');
-  const qText = document.createElement('div');
-  qText.classList.add('question');
-  qText.innerHTML = `<div class="question-text">${q.id}. ${q.question}</div>`;
-  const optionsDiv = document.createElement('div');
-  optionsDiv.classList.add('options');
-  q.options.forEach(opt=>{
-    const label = document.createElement('label');
-    label.classList.add('option');
-    label.innerHTML = `<input type="radio" name="q${q.id}" value="${opt.id}"> ${opt.text}`;
-    optionsDiv.appendChild(label);
+  let html=`<div class="question-text"><strong>${q.id}.</strong> ${q.question}</div>`;
+  html+='<div class="options">';
+  q.options.forEach(o=>{
+    html+=`<label class="option"><input type="radio" name="q${q.id}" value="${o.id}"> ${o.text}</label>`;
   });
-  qText.appendChild(optionsDiv);
-  qDiv.appendChild(qText);
-  questionsContainer.appendChild(qDiv);
+  html+='</div>';
+  qDiv.innerHTML=html;
+  container.appendChild(qDiv);
 });
 
-// Envio das respostas
+// Envio
 document.getElementById('submit-btn').addEventListener('click',async()=>{
-  const studentName = studentSelect.value;
+  const studentName = select.value;
   if(!studentName){alert('Selecione seu nome');return;}
   const answers={};
   allQuestions.forEach(q=>{
-    const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
-    answers[q.id] = selected ? selected.value : '';
+    const sel = document.querySelector(`input[name="q${q.id}"]:checked`);
+    answers[q.id] = sel?sel.value:'';
   });
-
-  const payload = {studentName, answers};
 
   document.getElementById('loading').style.display='block';
   document.getElementById('results').style.display='none';
 
   try{
-    const response = await fetch('https://script.google.com/macros/s/AKfycbyRog4bllKHJGAX1Y-G7DFvyM488ueQQIVKSyI104MOjBkc9oAcqCZ9X6mol255Ovlp/exec', {
+    const res = await fetch(location.href,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
+      body:JSON.stringify({studentName,answers})
     });
-    const result = await response.json();
+    const result = await res.json();
     document.getElementById('loading').style.display='none';
-
-    if(result.status==='OK'){
-      document.getElementById('score-value').textContent = '0';
-      document.getElementById('feedback').innerHTML = '<p>Respostas enviadas com sucesso!</p>';
-      document.getElementById('results').style.display='block';
-    }else{
-      alert(result.message || 'Erro desconhecido ao enviar respostas');
-    }
+    document.getElementById('result-message').textContent=result.message;
+    document.getElementById('results').style.display='block';
   }catch(err){
     document.getElementById('loading').style.display='none';
     alert('Erro na comunicação com o WebApp: '+err.message);

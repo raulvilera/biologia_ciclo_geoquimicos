@@ -5,65 +5,60 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>ATIVIDADE BIOLOGIA (3º Bimestre) - E.E. LYDIA KITZ MOREIRA</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Arial;}
-  body{background:linear-gradient(90deg,#c0c0c0,#a9a9a9);padding:20px;color:#222}
-  .container{max-width:1000px;margin:0 auto}
-  header{background:linear-gradient(90deg,#1a2980,#26d0ce);color:#fff;padding:20px;border-radius:10px;margin-bottom:18px}
-  .school-name{font-size:20px;font-weight:700}
-  .activity-title{font-size:22px;text-align:center;margin:12px 0;text-transform:uppercase}
-  .student-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-  .info-group{display:flex;flex-direction:column}
-  label{font-weight:700;margin-bottom:6px}
-  input,select,button{padding:10px;border-radius:6px;border:none}
-  input,select{background:rgba(255,255,255,0.95)}
-  .question-container{background:linear-gradient(90deg,#1a2980,#26d0ce);padding:16px;border-radius:10px;margin-bottom:14px;color:#fff}
-  .question{background:rgba(255,255,255,0.08);padding:12px;border-radius:8px}
-  .question-text{font-weight:700;margin-bottom:8px}
-  .options{display:grid;gap:8px;margin-top:8px}
-  .option{background:rgba(255,255,255,0.12);padding:8px;border-radius:6px;cursor:pointer}
-  .option input{margin-right:10px}
-  .buttons{display:flex;justify-content:center;margin:16px 0}
-  button{background:linear-gradient(90deg,#1a2980,#26d0ce);color:#fff;font-weight:700;cursor:pointer}
-  .results{display:none;background:linear-gradient(90deg,#1a2980,#26d0ce);color:#fff;padding:16px;border-radius:10px;margin-top:12px}
-  .score{font-size:20px;font-weight:700;margin-bottom:8px}
-  .feedback{margin-top:8px;text-align:left}
-  .correct{color:#7fff00;font-weight:700}
-  .incorrect{color:#ffb3a7;font-weight:700}
-  .loading{display:none;text-align:center;margin:12px 0}
-  .spinner{width:30px;height:30px;border-radius:50%;border:4px solid rgba(255,255,255,0.25);border-top:4px solid #26d0ce;animation:spin 1s linear infinite;margin:0 auto}
-  @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-  @media(max-width:768px){.student-info{grid-template-columns:1fr}}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Arial;}
+body{background:linear-gradient(90deg,#c0c0c0,#a9a9a9);padding:20px;color:#222}
+.container{max-width:1000px;margin:0 auto}
+header{background:linear-gradient(90deg,#1a2980,#26d0ce);color:#fff;padding:20px;border-radius:10px;margin-bottom:18px}
+.school-name{font-size:20px;font-weight:700}
+.activity-title{font-size:22px;text-align:center;margin:12px 0;text-transform:uppercase}
+.student-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.info-group{display:flex;flex-direction:column}
+label{font-weight:700;margin-bottom:6px}
+input,select,button{padding:10px;border-radius:6px;border:none}
+input,select{background:rgba(255,255,255,0.95)}
+.question-container{background:linear-gradient(90deg,#1a2980,#26d0ce);padding:16px;border-radius:10px;margin-bottom:14px;color:#fff}
+.question{background:rgba(255,255,255,0.08);padding:12px;border-radius:8px}
+.question-text{font-weight:700;margin-bottom:8px}
+.options{display:grid;gap:8px;margin-top:8px}
+.option{background:rgba(255,255,255,0.12);padding:8px;border-radius:6px;cursor:pointer}
+.option input{margin-right:10px}
+.buttons{display:flex;justify-content:center;margin:16px 0}
+button{background:linear-gradient(90deg,#1a2980,#26d0ce);color:#fff;font-weight:700;cursor:pointer}
+.results{display:none;background:linear-gradient(90deg,#1a2980,#26d0ce);color:#fff;padding:16px;border-radius:10px;margin-top:12px}
+.score{font-size:20px;font-weight:700;margin-bottom:8px}
+.feedback{margin-top:8px;text-align:left}
+.correct{color:#7fff00;font-weight:700}
+.incorrect{color:#ffb3a7;font-weight:700}
+.loading{display:none;text-align:center;margin:12px 0}
+.spinner{width:30px;height:30px;border-radius:50%;border:4px solid rgba(255,255,255,0.25);border-top:4px solid #26d0ce;animation:spin 1s linear infinite;margin:0 auto}
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@media(max-width:768px){.student-info{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="container">
   <header>
     <div class="school-name">E.E. LYDIA KITZ MOREIRA</div>
-
-    <div class="student-info" style="margin-top:12px">
+    <div class="student-info">
       <div class="info-group">
         <label for="student-name">NOME:</label>
         <select id="student-name">
           <option value="">Selecione seu nome</option>
         </select>
       </div>
-
       <div class="info-group">
         <label for="student-number">Nº:</label>
         <input id="student-number" readonly />
       </div>
-
       <div class="info-group">
         <label for="student-grade">SÉRIE:</label>
         <input id="student-grade" value="1ª Série" readonly />
       </div>
-
       <div class="info-group">
         <label for="student-email">E-mail institucional:</label>
         <input id="student-email" readonly />
       </div>
     </div>
-
     <div class="activity-title">ATIVIDADE DE BIOLOGIA (3º BIMESTRE)</div>
     <div style="text-align:center;color:#eaf8ff;margin-top:6px">"REVISÃO DOS TEMAS"</div>
   </header>
@@ -80,13 +75,13 @@
   </div>
 
   <div id="results" class="results">
-    <div class="score">Sua pontuação: <span id="score-value">0</span>/10</div>
+    <div class="score">Sua pontuação: <span id="score-value">0</span></div>
     <div id="feedback" class="feedback"></div>
   </div>
 </div>
 
 <script>
-/* === LISTA COMPLETA DE ALUNOS === */
+// === LISTA COMPLETA DE ALUNOS ===
 const students = [
  { id: 1, name: "ALEXANDRE BATISTA DOS SANTOS", email: "00001141439785SP@al.educacao.sp.gov.br" },
  { id: 5, name: "ANA LÍVIA BRAGA DOS SANTOS", email: "00001122248246SP@al.educacao.sp.gov.br" },
@@ -133,7 +128,7 @@ const students = [
  { id: 82, name: "JULIA ARAUJO DE LIMA", email: "00001101366886SP@al.educacao.sp.gov.br" }
 ];
 
-/* === QUESTÕES (COMPLETAS, exatamente como fornecido) === */
+// === QUESTÕES COMPLETAS ===
 const allQuestions = [
   {
     id:1,
@@ -143,8 +138,7 @@ const allQuestions = [
       {id:'b', text:'A energia é perdida principalmente na forma de calor durante os processos metabólicos, como a respiração celular, que ocorre em todos os organismos.'},
       {id:'c', text:'A energia é perdida devido à competição interespecífica dentro de cada nível trófico, reduzindo a eficiência da transferência.'},
       {id:'d', text:'Os decompositores consomem a maior parte da energia antes que ela possa ser transferida para os níveis tróficos superiores.'}
-    ],
-    explanation:`A segunda lei da termodinâmica explica que em cada transformação de energia parte é dissipada como calor. Nos ecossistemas, a respiração celular converte parte da energia em calor, limitando a transferência para níveis superiores.`
+    ]
   },
   {
     id:2,
@@ -154,8 +148,7 @@ const allQuestions = [
       {id:'b', text:'A respiração aeróbica de todos os organismos heterotróficos e a liberação de carbono durante erupções vulcânicas.'},
       {id:'c', text:'A produção de cimento e a aplicação de fertilizantes nitrogenados na agricultura intensiva.'},
       {id:'d', text:'A queima de combustíveis fósseis e as mudanças no uso do solo, como o desmatamento de florestas tropicais.'}
-    ],
-    explanation:`A queima de combustíveis fósseis e o desmatamento são as principais contribuições humanas para o aumento do CO₂ atmosférico.`
+    ]
   },
   {
     id:3,
@@ -165,8 +158,7 @@ const allQuestions = [
       {id:'b', text:'As cianobactérias e rizóbios convertem o N₂ atmosférico em amônia, tornando o nitrogênio acessível aos produtores primários.'},
       {id:'c', text:'As bactérias nitrificantes convertem amônia em nitrito e depois em nitrato, formas mais facilmente absorvidas pelas raízes das plantas.'},
       {id:'d', text:'As bactérias desnitrificantes devolvem o nitrogênio à atmosfera, completando o ciclo e mantendo o equilíbrio ecológico.'}
-    ],
-    explanation:`A fixação biológica é realizada por rizóbios e cianobactérias que convertem N₂ em amônia utilizável pelas plantas.`
+    ]
   },
   {
     id:4,
@@ -176,8 +168,7 @@ const allQuestions = [
       {id:'b', text:'Liberação imediata e concentrada de nutrientes, permitindo correção rápida de deficiências nutricionais nas plantas.'},
       {id:'c', text:'Maior facilidade de aplicação e dosagem precisa dos macronutrientes necessários para o crescimento vegetal.'},
       {id:'d', text:'Maior concentração de nutrientes por unidade de peso, reduzindo custos de transporte e armazenamento.'}
-    ],
-    explanation:`Fertilizantes orgânicos melhoram a estrutura física e biológica do solo, retendo água e favorecendo microrganismos.`
+    ]
   },
   {
     id:5,
@@ -187,225 +178,132 @@ const allQuestions = [
       {id:'b', text:'Acidificação da água → dissolução de metais pesados → toxicidade para organismos aquáticos → bioacumulação → desequilíbrio ecológico.'},
       {id:'c', text:'Acúmulo de sedimentos → assoreamento → redução da profundidade → aumento da temperatura → alteração nas comunidades biológicas.'},
       {id:'d', text:'Aumento de nutrientes → proliferação de algas → bloqueio da luz solar → morte de plantas aquáticas → decomposição → consumo de oxigênio → morte de peixes.'}
-    ],
-    explanation:`Excesso de nutrientes causa proliferação de algas; decomposição consome oxigênio, levando à morte de peixes.`
+    ]
   },
   {
     id:6,
-    question:`Em uma aula prática sobre fotossíntese, alunos investigaram como diferentes fatores ambientais afetam a taxa desse processo. Eles montaram um experimento com plantas aquáticas e observaram a liberação de bolhas de oxigênio sob diferentes condições. Qual das seguintes variáveis afeta diretamente a fase fotoquímica da fotossíntese?`,
+    question:`Em uma aula prática sobre fotossíntese, alunos investigaram como diferentes fatores ambientais afetam a taxa de produção de glicose em plantas. Considerando o efeito da luz, temperatura e disponibilidade de CO₂, qual das alternativas melhor explica a limitação do processo fotossintético?`,
     options:[
-      {id:'a', text:'A concentração de ATP e NADPH, que são produtos da fase clara e essenciais para as reações de fixação de carbono.'},
-      {id:'b', text:'A disponibilidade de CO₂ no meio, que é o substrato principal para a fixação de carbono no ciclo de Calvin.'},
-      {id:'c', text:'A temperatura do ambiente, que influencia a atividade enzimática envolvida nas reações bioquímicas do processo.'},
-      {id:'d', text:'A intensidade luminosa, que fornece a energia necessária para excitar elétrons e iniciar o transporte de elétrons fotossintético.'}
-    ],
-    explanation:`A fase fotoquímica depende diretamente da luz; a intensidade luminosa excita elétrons e inicia o transporte.`
+      {id:'a', text:'A intensidade luminosa elevada diminui a fotossíntese porque danifica os cloroplastos.'},
+      {id:'b', text:'A baixa disponibilidade de CO₂ e temperaturas extremas podem limitar a eficiência da fotossíntese, reduzindo a produção de glicose.'},
+      {id:'c', text:'A fotossíntese não depende do CO₂ ou da luz, apenas da água disponível para a planta.'},
+      {id:'d', text:'A temperatura elevada aumenta indefinidamente a fotossíntese sem limites, enquanto o CO₂ não tem impacto significativo.'}
+    ]
   },
   {
     id:7,
-    question:`O aquecimento global tem impactado significativamente os ecossistemas marinhos. Pesquisadores estudam os efeitos do aumento de CO₂ atmosférico nos oceanos, incluindo a acidificação. Qual das seguintes afirmações melhor explica a relação entre o aumento de CO₂ atmosférico e a acidificação dos oceanos?`,
+    question:`Durante uma pesquisa sobre ecologia de populações, alunos observaram o crescimento populacional de uma espécie de coelho em uma determinada região. Considerando os conceitos de capacidade de suporte e fatores limitantes, qual alternativa melhor descreve o que aconteceria se a população ultrapassasse a capacidade de suporte do ambiente?`,
     options:[
-      {id:'a', text:'O derretimento das calotas polares libera água doce com pH naturalmente mais ácido, alterando a química oceânica.'},
-      {id:'b', text:'As chuvas ácidas, resultantes da poluição industrial, são a principal causa da acidificação dos oceanos.'},
-      {id:'c', text:'O aumento da temperatura global acelera a decomposição da matéria orgânica nos oceanos, liberando ácidos orgânicos.'},
-      {id:'d', text:'O CO₂ atmosférico dissolve-se diretamente na água do mar, formando ácido carbônico que diminui o pH oceânico.'}
-    ],
-    explanation:`Quando o CO₂ se dissolve na água do mar forma ácido carbônico, aumentando H+ e reduzindo o pH (acidificação).`
+      {id:'a', text:'A população se estabilizaria automaticamente sem impacto ambiental.'},
+      {id:'b', text:'Haveria aumento da mortalidade e diminuição da natalidade devido à escassez de recursos, levando a flutuações populacionais.'},
+      {id:'c', text:'Os predadores desapareceriam, permitindo crescimento ilimitado da população.'},
+      {id:'d', text:'A população se dispersaria para outros ecossistemas sem qualquer consequência no ambiente original.'}
+    ]
   },
   {
     id:8,
-    question:`Em um ecossistema de cerrado, pesquisadores estudaram as adaptações das plantas às condições de solo ácido e pobre em nutrientes. Eles observaram que muitas plantas desenvolveram estratégias específicas para obter nutrientes. Qual das seguintes adaptações está mais diretamente relacionada à aquisição de fósforo em solos com pH baixo?`,
+    question:`Pesquisadores analisaram cadeias tróficas em diferentes ecossistemas. Em uma delas, observaram que a biomassa de produtores primários era significativamente maior que a de consumidores secundários. Qual princípio ecológico melhor explica essa diferença?`,
     options:[
-      {id:'a', text:'O desenvolvimento de tricomas foliares especializados na absorção de nutrientes a partir da água da chuva.'},
-      {id:'b', text:'A produção de compostos alelopáticos que inibem a crescimento de plantas competidoras, reduzindo a competição por recursos.'},
-      {id:'c', text:'A formação de raízes aéreas que absorvem nutrientes diretamente da atmosfera através de finas películas radiculares.'},
-      {id:'d', text:'O estabelecimento de associações simbióticas com fungos micorrízicos que aumentam a superfície de absorção radicular.'}
-    ],
-    explanation:`As micorrizas aumentam a área de absorção e ajudam na aquisição de fósforo em solos pobres e ácidos.`
+      {id:'a', text:'A eficiência de conversão de energia é maior nos consumidores superiores.'},
+      {id:'b', text:'A energia é transferida com 100% de eficiência entre os níveis tróficos, mas os produtores crescem mais rapidamente.'},
+      {id:'c', text:'Há perda de energia em cada transferência trófica devido à respiração, metabolismo e calor, resultando em maior biomassa nos níveis inferiores.'},
+      {id:'d', text:'Os decompositores consomem a maior parte da energia dos produtores, reduzindo a biomassa dos consumidores.'}
+    ]
   },
   {
     id:9,
-    question:`A respiração celular é um processo fundamental para a produção de energia nos organismos aeróbicos. Em uma aula de laboratório, estudantes compararam a eficiência energética da respiração aeróbica com a fermentação. Qual das seguintes afirmações melhor explica a vantagem da respiração aeróbica em termos de produção de ATP?`,
+    question:`Em estudos sobre ciclos biogeoquímicos, alunos investigaram como atividades humanas alteram esses ciclos. Qual das alternativas melhor exemplifica a interferência humana no ciclo do fósforo?`,
     options:[
-      {id:'a', text:'As enzimas envolvidas na respiração aeróbica têm maior afinidade pelos seus substratos, acelerando as reações metabólicas.'},
-      {id:'b', text:'A respiração aeróbica produz intermediários metabólicos que podem ser utilizados em outras vias biossintéticas, aumentando a eficiência celular.'},
-      {id:'c', text:'O oxigênio atua como aceptor final de elétrons de alto potencial redutor, permitindo a completa oxidação da glicose e máxima produção de ATP.'},
-      {id:'d', text:'A respiração aeróbica utiliza uma variedade maior de substratos energéticos, incluindo carboidratos, lipídios e proteínas.'}
-    ],
-    explanation:`O oxigênio como aceptor final permite a completa oxidação da glicose e produção máxima de ATP.`
+      {id:'a', text:'O desmatamento de florestas tropicais aumenta a fixação biológica do fósforo no solo.'},
+      {id:'b', text:'A aplicação excessiva de fertilizantes fosfatados em agricultura e o escoamento de detergentes ricos em fósforo para rios e lagos.'},
+      {id:'c', text:'A queima de combustíveis fósseis libera fósforo para a atmosfera, aumentando sua concentração global.'},
+      {id:'d', text:'O aumento da população de decompositores libera fósforo adicional na atmosfera.'}
+    ]
   },
   {
     id:10,
-    question:`A biodiversidade é fundamental para a resiliência dos ecossistemas. Em um estudo de longo prazo, ecólogos observaram que ecossistemas com maior diversidade de espécies tendem a ser mais estáveis e resistentes a perturbações. Qual dos seguintes mecanismos melhor explica essa relação entre biodiversidade e estabilidade ecossistêmica?`,
+    question:`Em uma análise sobre o impacto ambiental de diferentes tipos de resíduos, alunos observaram que resíduos orgânicos, plásticos e metais apresentam comportamentos distintos no solo. Qual alternativa apresenta corretamente a diferença principal entre resíduos orgânicos e resíduos inorgânicos em termos de decomposição?`,
     options:[
-      {id:'a', text:'O aumento da competição interespecífica em ecossistemas diversos, que seleciona organismos mais eficientes e adaptados às condições ambientais.'},
-      {id:'b', text:'A hipótese de redundância funcional, onde múltiplas espécies desempenham funções similares, garantindo que o ecossistema mantenha suas funções mesmo com a perda de algumas espécies.'},
-      {id:'c', text:'O efeito de complementaridade, onde espécies diferentes utilizam recursos de maneira complementar, aumentando a eficiência geral do ecossistema.'},
-      {id:'d', text:'A maior probabilidade de que ecossistemas diversos contenham espécies chave com influência desproporcional sobre a estrutura comunitária.'}
-    ],
-    explanation:`A redundância funcional garante que múltiplas espécies desempenhem papéis similares, preservando funções se algumas forem perdidas.`
+      {id:'a', text:'Resíduos orgânicos decompõem-se mais lentamente que plásticos e metais.'},
+      {id:'b', text:'Resíduos orgânicos podem ser transformados em nutrientes pelo solo e micro-organismos, enquanto plásticos e metais persistem por longos períodos.'},
+      {id:'c', text:'Resíduos inorgânicos fornecem nutrientes para plantas, enquanto resíduos orgânicos não.'},
+      {id:'d', text:'Não há diferença significativa no processo de decomposição entre resíduos orgânicos e inorgânicos.'}
+    ]
   }
 ];
 
-/* === URL do backend (mude para sua /exec quando publicar) === */
-const backendUrl = "https://script.google.com/macros/s/AKfycbynH1Y_qXOmwUbydfXnL9qqRYMW0PaoV3LnSmSbqnOAhjwMnECrWPKh0XDv9F7SbQfQ/exec";
+// Preenche dropdown de alunos
+const studentSelect = document.getElementById('student-name');
+students.forEach(s => {
+  const option = document.createElement('option');
+  option.value = s.name;
+  option.textContent = s.name;
+  studentSelect.appendChild(option);
+});
 
-/* === RENDERIZAÇÃO E LÓGICA === */
-let studentAnswers = {};
-function initializePage(){
-  const sel = document.getElementById('student-name');
-  students.forEach(s => {
-    const opt = document.createElement('option');
-    opt.value = s.id;
-    opt.textContent = s.name;
-    sel.appendChild(opt);
+studentSelect.addEventListener('change',()=>{
+  const selected = students.find(s=>s.name===studentSelect.value);
+  document.getElementById('student-number').value = selected ? selected.id : '';
+  document.getElementById('student-email').value = selected ? selected.email : '';
+});
+
+// Renderiza questões
+const questionsContainer = document.getElementById('questions-container');
+allQuestions.forEach(q=>{
+  const qDiv = document.createElement('div');
+  qDiv.classList.add('question-container');
+  const qText = document.createElement('div');
+  qText.classList.add('question');
+  qText.innerHTML = `<div class="question-text">${q.id}. ${q.question}</div>`;
+  const optionsDiv = document.createElement('div');
+  optionsDiv.classList.add('options');
+  q.options.forEach(opt=>{
+    const label = document.createElement('label');
+    label.classList.add('option');
+    label.innerHTML = `<input type="radio" name="q${q.id}" value="${opt.id}"> ${opt.text}`;
+    optionsDiv.appendChild(label);
   });
-  sel.addEventListener('change', onStudentChange);
-  renderQuestions();
-  document.getElementById('submit-btn').addEventListener('click', onSubmit);
-}
-function onStudentChange(e){
-  const id = e.target.value;
-  const s = students.find(x => x.id == id);
-  if(s){
-    document.getElementById('student-number').value = s.id;
-    document.getElementById('student-email').value = s.email;
-  } else {
-    document.getElementById('student-number').value = '';
-    document.getElementById('student-email').value = '';
-  }
-}
-function renderQuestions(){
-  const container = document.getElementById('questions-container');
-  container.innerHTML = '';
-  allQuestions.forEach((q, idx) => {
-    const wrap = document.createElement('div');
-    wrap.className = 'question-container';
-    let html = `<div class="question"><div class="question-text">${idx+1}. ${q.question}</div><div class="options">`;
-    q.options.forEach(opt => {
-      html += `<label class="option"><input type="radio" name="q${q.id}" value="${opt.id}"> ${opt.text}</label>`;
-    });
-    html += `</div></div>`;
-    wrap.innerHTML = html;
-    container.appendChild(wrap);
+  qText.appendChild(optionsDiv);
+  qDiv.appendChild(qText);
+  questionsContainer.appendChild(qDiv);
+});
+
+// Envio das respostas
+document.getElementById('submit-btn').addEventListener('click',async()=>{
+  const studentName = studentSelect.value;
+  if(!studentName){alert('Selecione seu nome');return;}
+  const answers={};
+  allQuestions.forEach(q=>{
+    const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
+    answers[q.id] = selected ? selected.value : '';
   });
-}
 
-/* === ENVIO: manda JSON ao backend e exibe feedback conforme retorno === */
-async function onSubmit(){
-  const sel = document.getElementById('student-name');
-  if(!sel.value){
-    alert('Por favor, selecione seu nome antes de enviar.');
-    return;
-  }
-  // coleta respostas
-  studentAnswers = {};
-  allQuestions.forEach(q => {
-    const chosen = document.querySelector(`input[name="q${q.id}"]:checked`);
-    studentAnswers[q.id] = chosen ? chosen.value : null;
-  });
-  const unanswered = Object.values(studentAnswers).filter(v => v === null).length;
-  if(unanswered > 0){
-    if(!confirm(`Você deixou ${unanswered} questão(ões) sem resposta. Deseja enviar mesmo assim?`)) return;
-  }
+  const payload = {studentName, answers};
 
-  // monta payload
-  const studentId = document.getElementById('student-number').value;
-  const studentObj = students.find(s => s.id == studentId);
-  const payload = {
-    studentName: studentObj ? studentObj.name : '',
-    studentNumber: studentObj ? studentObj.id : '',
-    studentEmail: studentObj ? studentObj.email : '',
-    studentGrade: document.getElementById('student-grade').value || '',
-    timestamp: new Date().toISOString(),
-    answers: studentAnswers
-  };
-
-  // exibe loading e envia
-  document.getElementById('loading').style.display = 'block';
-  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('loading').style.display='block';
+  document.getElementById('results').style.display='none';
 
   try{
-    const res = await fetch(backendUrl, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
+    const response = await fetch('https://script.google.com/macros/s/AKfycbyRog4bllKHJGAX1Y-G7DFvyM488ueQQIVKSyI104MOjBkc9oAcqCZ9X6mol255Ovlp/exec', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify(payload)
     });
+    const result = await response.json();
+    document.getElementById('loading').style.display='none';
 
-    if (!res.ok) {
-      const txt = await res.text();
-      throw new Error('Resposta do servidor: ' + res.status + ' - ' + txt);
+    if(result.status==='OK'){
+      document.getElementById('score-value').textContent = '0';
+      document.getElementById('feedback').innerHTML = '<p>Respostas enviadas com sucesso!</p>';
+      document.getElementById('results').style.display='block';
+    }else{
+      alert(result.message || 'Erro desconhecido ao enviar respostas');
     }
-
-    const json = await res.json();
-
-    if(json && json.status && json.status.toUpperCase()==='OK'){
-      displayResultsFromBackend(json);
-    } else {
-      throw new Error((json && json.message) ? json.message : 'Resposta inesperada do servidor.');
-    }
-
-  } catch(err){
-    console.error(err);
-    alert('Ocorreu um erro ao enviar as respostas. Verifique o link do WebApp, as permissões e se o WebApp está publicado corretamente. Erro: ' + err.message);
-  } finally {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('submit-btn').disabled = false;
+  }catch(err){
+    document.getElementById('loading').style.display='none';
+    alert('Erro na comunicação com o WebApp: '+err.message);
   }
-}
-
-function displayResultsFromBackend(json){
-  // segurança: esconde loading
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('submit-btn').disabled = false;
-
-  const scoreSpan = document.getElementById('score-value');
-  scoreSpan.textContent = (typeof json.score === 'number') ? json.score : '0';
-
-  const feedbackDiv = document.getElementById('feedback');
-  feedbackDiv.innerHTML = '';
-
-  if(Array.isArray(json.details)){
-    json.details.sort((a,b) => a.id - b.id).forEach((d, idx) => {
-      const q = allQuestions.find(x => x.id == d.id);
-      const wasCorrect = !!d.correct;
-      const userAnswer = (d.userAnswer !== undefined && d.userAnswer !== null) ? d.userAnswer : 'não respondida';
-      const correctAnswer = d.correctAnswer || (d.explanation ? 'ver explicação' : '');
-
-      let block = document.createElement('div');
-      block.style.marginBottom = '10px';
-
-      const line = document.createElement('p');
-      line.innerHTML = `<strong>Questão ${d.id}:</strong> ${wasCorrect ? "<span class='correct'>✓ Correta</span>" : "<span class='incorrect'>✗ Incorreta</span>"} <br><strong>Sua resposta:</strong> ${userAnswer} ${!wasCorrect ? `<br><strong>Gabarito:</strong> ${correctAnswer}` : ''}`;
-      block.appendChild(line);
-
-      // mostrar explicação (do backend)
-      if(d.explanation){
-        const p = document.createElement('p');
-        p.style.marginTop = '6px';
-        p.style.fontStyle = 'italic';
-        p.textContent = d.explanation;
-        block.appendChild(p);
-      } else if(q && q.explanation){
-        const p = document.createElement('p');
-        p.style.marginTop = '6px';
-        p.style.fontStyle = 'italic';
-        p.textContent = q.explanation;
-        block.appendChild(p);
-      }
-
-      feedbackDiv.appendChild(block);
-    });
-  } else {
-    feedbackDiv.innerHTML = '<p>Feedback detalhado indisponível.</p>';
-  }
-
-  document.getElementById('results').style.display = 'block';
-  window.scrollTo(0,document.body.scrollHeight);
-}
-
-/* Inicializa página */
-window.addEventListener('DOMContentLoaded', initializePage);
+});
 </script>
 </body>
 </html>

@@ -1,223 +1,562 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8" />
-<title>Atividade de Biologia - 3º Bimestre</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif;}
-body{background:#f0f0f0;padding:20px;}
-.container{max-width:900px;margin:0 auto;background:#fff;padding:25px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,0.1);}
-header{text-align:center;margin-bottom:20px;}
-.question-container{background:#e0f7fa;margin-bottom:15px;padding:15px;border-radius:8px;}
-.options{display:grid;gap:5px;margin-top:10px;}
-.option input{margin-right:8px;}
-.buttons{margin-top:15px;text-align:center;}
-button{padding:10px 20px;border:none;border-radius:6px;background:#26d0ce;color:#fff;font-weight:bold;cursor:pointer;}
-#results{display:none;margin-top:20px;background:#c8e6c9;padding:10px;border-radius:6px;}
-.loading{display:none;text-align:center;margin:10px;font-weight:bold;}
-</style>
-</head>
-<body>
-<div class="container">
-  <header>
-    <h2>Atividade de Biologia (3º Bimestre)</h2>
-    <p>Revisão dos principais conceitos estudados no bimestre</p>
-  </header>
-
-  <div class="student-info" style="margin-bottom:20px;">
-    <label>Nome: 
-      <select id="student-name"><option value="">Selecione seu nome</option></select>
-    </label>
-    <label>Nº: <input id="student-number" readonly></label>
-    <label>Email: <input id="student-email" readonly></label>
-  </div>
-
-  <div id="questions-container"></div>
-
-  <div class="loading" id="loading">Enviando respostas...</div>
-
-  <div class="buttons">
-    <button id="submit-btn">Enviar Respostas</button>
-  </div>
-
-  <div id="results">
-    <p id="result-message"></p>
-  </div>
-</div>
-
-<script>
-// Lista de alunos (abreviada, insira todos os que precisar)
-const students = [
-  {id:1,name:"ALEXANDRE BATISTA DOS SANTOS",email:"00001141439785SP@al.educacao.sp.gov.br"},
-  {id:5,name:"ANA LÍVIA BRAGA DOS SANTOS",email:"00001122248246SP@al.educacao.sp.gov.br"},
-  {id:7,name:"ARTHUR CASTRO SILVA",email:"00001122238228SP@al.educacao.sp.gov.br"},
-  {id:11,name:"DANIELLE OLIVEIRA DA SILVA NUNES",email:"00001122096756SP@al.educacao.sp.gov.br"},
-  {id:14,name:"ELOYSA ANDRADE OLIVEIRA SILVA",email:"00001103565242SP@al.educacao.sp.gov.br"}
-  // Continue com todos os alunos...
-];
-
-// Preenche dropdown
-const select = document.getElementById('student-name');
-students.forEach(s=>{
-  const opt = document.createElement('option');
-  opt.value=s.name;
-  opt.textContent=s.name;
-  select.appendChild(opt);
-});
-
-select.addEventListener('change',()=>{
-  const sel = students.find(s=>s.name===select.value);
-  document.getElementById('student-number').value=sel?sel.id:'';
-  document.getElementById('student-email').value=sel?sel.email:'';
-});
-
-// QUESTÕES (10) com maior contextualização e dificuldade
-const allQuestions = [
-  {
-    id:1,
-    question:`Em uma floresta tropical, pesquisadores estudaram a eficiência energética nas cadeias alimentares. Observou-se que, a cada nível trófico, apenas uma fração da energia é transferida. Considerando os conceitos de termodinâmica e ecologia, qual é a principal razão dessa diminuição de energia disponível?`,
-    options:[
-      {id:'a',text:'A energia é dissipada principalmente na forma de calor durante o metabolismo, limitando a quantidade transferida aos consumidores seguintes.'},
-      {id:'b',text:'A energia é bloqueada pelos decompositores que consomem a maior parte antes que outros níveis a recebam.'},
-      {id:'c',text:'A energia é completamente absorvida pelos produtores, impedindo que chegue aos consumidores primários.'},
-      {id:'d',text:'A energia é perdida devido à competição entre espécies dentro do mesmo nível trófico.'}
-    ]
-  },
-  {
-    id:2,
-    question:`Durante o estudo de um lago eutrofizado, observou-se proliferação intensa de algas seguida de mortalidade de peixes. Analise o processo e indique qual sequência de eventos melhor descreve a eutrofização e seus efeitos na biodiversidade aquática.`,
-    options:[
-      {id:'a',text:'Aumento de nutrientes → proliferação de algas → bloqueio de luz → morte de plantas → decomposição → consumo de oxigênio → morte de peixes.'},
-      {id:'b',text:'Acúmulo de sedimentos → redução de profundidade → aumento de temperatura → alteração das comunidades biológicas.'},
-      {id:'c',text:'Liberação de toxinas → aumento de temperatura → extinção de espécies microbianas → recuperação natural.'},
-      {id:'d',text:'Acidificação do lago → proliferação de algas → oxigenação do ambiente → aumento da biodiversidade.'}
-    ]
-  },
-  {
-    id:3,
-    question:`Em experimentos de fotossíntese, alunos investigaram a influência da intensidade luminosa e da disponibilidade de CO₂ em plantas aquáticas. Qual variável afeta diretamente a fase fotoquímica da fotossíntese e por quê?`,
-    options:[
-      {id:'a',text:'A intensidade luminosa, pois fornece energia para excitar elétrons e iniciar a cadeia de transporte eletrônico.'},
-      {id:'b',text:'A disponibilidade de CO₂, pois determina diretamente a quantidade de ATP produzido na fase clara.'},
-      {id:'c',text:'A temperatura, pois controla a absorção de água pelas folhas e produção de O₂.'},
-      {id:'d',text:'A concentração de nutrientes minerais no solo, pois influencia a fotólise da água.'}
-    ]
-  },
-  {
-    id:4,
-    question:`O aumento de CO₂ atmosférico está relacionado à acidificação dos oceanos. Em estudos recentes, percebeu-se que a dissolução de CO₂ na água do mar altera o equilíbrio químico e a vida marinha. Qual mecanismo explica essa acidificação?`,
-    options:[
-      {id:'a',text:'O CO₂ dissolve-se na água formando ácido carbônico, aumentando a concentração de H+ e reduzindo o pH.'},
-      {id:'b',text:'O aumento de CO₂ estimula o crescimento de algas que acidificam a água.'},
-      {id:'c',text:'O CO₂ reage com o oxigênio do mar formando óxidos que diminuem o pH.'},
-      {id:'d',text:'O CO₂ precipita na forma de carbonato de cálcio, liberando íons H+.'}
-    ]
-  },
-  {
-    id:5,
-    question:`Durante a observação do ciclo do nitrogênio em um solo agrícola, foram identificadas bactérias fixadoras de N₂ e bactérias nitrificantes. Qual é a importância ecológica da fixação biológica do nitrogênio?`,
-    options:[
-      {id:'a',text:'Converte N₂ atmosférico em amônia, tornando o nitrogênio disponível para os produtores primários.'},
-      {id:'b',text:'Converte nitrato em nitrito, completando o ciclo do nitrogênio.'},
-      {id:'c',text:'Libera gás nitroso para a atmosfera, regulando a pressão atmosférica.'},
-      {id:'d',text:'Aumenta a concentração de nitrogênio nos decompositores, acelerando a decomposição.'}
-    ]
-  },
-  {
-    id:6,
-    question:`Em áreas de cerrado com solos ácidos e pobres em fósforo, muitas plantas desenvolveram associações com fungos micorrízicos. Qual a vantagem ecológica dessa adaptação?`,
-    options:[
-      {id:'a',text:'Aumenta a absorção de fósforo e outros nutrientes essenciais em solos pobres, melhorando o crescimento vegetal.'},
-      {id:'b',text:'Permite às plantas capturar água diretamente da atmosfera em regiões secas.'},
-      {id:'c',text:'Bloqueia o crescimento de espécies competidoras, garantindo exclusividade territorial.'},
-      {id:'d',text:'Produz toxinas que eliminam herbívoros e polinizadores.'}
-    ]
-  },
-  {
-    id:7,
-    question:`A respiração celular é essencial para a produção de ATP. Comparando respiração aeróbica e fermentação, qual é a principal vantagem da respiração aeróbica em termos energéticos?`,
-    options:[
-      {id:'a',text:'Permite a oxidação completa da glicose utilizando oxigênio como aceptor final de elétrons, produzindo maior quantidade de ATP.'},
-      {id:'b',text:'Produz ATP sem necessidade de oxigênio, tornando o processo mais rápido.'},
-      {id:'c',text:'Gera subprodutos que aceleram a fotossíntese em plantas próximas.'},
-      {id:'d',text:'Depende apenas de nutrientes minerais, tornando a respiração mais eficiente.'}
-    ]
-  },
-  {
-    id:8,
-    question:`Estudos sobre biodiversidade em ecossistemas terrestres mostraram que áreas com maior diversidade de espécies tendem a ser mais estáveis. Qual mecanismo ecológico explica essa relação entre diversidade e estabilidade?`,
-    options:[
-      {id:'a',text:'A redundância funcional, onde múltiplas espécies desempenham funções semelhantes, garantindo que o ecossistema mantenha suas funções mesmo se algumas forem perdidas.'},
-      {id:'b',text:'A competição intensa entre espécies impede a dominação de uma única espécie, aumentando a estabilidade.'},
-      {id:'c',text:'A presença de predadores elimina todas as espécies fracas, deixando apenas espécies fortes.'},
-      {id:'d',text:'O clima controla todos os processos ecológicos, tornando a diversidade irrelevante para a estabilidade.'}
-    ]
-  },
-  {
-    id:9,
-    question:`O desmatamento e a fragmentação de habitats impactam diretamente a migração de polinizadores e dispersores de sementes. Qual é a consequência mais direta desses impactos na regeneração vegetal?`,
-    options:[
-      {id:'a',text:'Redução na diversidade genética e menor regeneração natural das plantas, comprometendo a resiliência do ecossistema.'},
-      {id:'b',text:'Aumento da polinização cruzada, melhorando a qualidade das sementes.'},
-      {id:'c',text:'Maior crescimento de espécies pioneiras, mantendo o equilíbrio ecológico.'},
-      {id:'d',text:'Aumento da competição por nutrientes entre plantas, acelerando a regeneração.'}
-    ]
-  },
-  {
-    id:10,
-    question:`Pesquisadores analisaram os impactos do aquecimento global nos recifes de coral. Observou-se branqueamento intenso seguido de mortalidade. Qual é o principal fator bioquímico responsável pelo branqueamento?`,
-    options:[
-      {id:'a',text:'Estresse térmico que causa a expulsão das zooxantelas simbióticas, reduzindo a capacidade fotossintética dos corais.'},
-      {id:'b',text:'Aumento do CO₂ atmosférico que altera a salinidade, destruindo os corais.'},
-      {id:'c',text:'Poluição sonora que impede a reprodução sexual dos corais.'},
-      {id:'d',text:'Acidificação do oceano que transforma o cálcio do esqueleto em dióxido de carbono.'}
-    ]
-  }
-];
-
-// Renderiza questões
-const container = document.getElementById('questions-container');
-allQuestions.forEach(q=>{
-  const qDiv = document.createElement('div');
-  qDiv.classList.add('question-container');
-  let html=`<div class="question-text"><strong>${q.id}.</strong> ${q.question}</div>`;
-  html+='<div class="options">';
-  q.options.forEach(o=>{
-    html+=`<label class="option"><input type="radio" name="q${q.id}" value="${o.id}"> ${o.text}</label>`;
-  });
-  html+='</div>';
-  qDiv.innerHTML=html;
-  container.appendChild(qDiv);
-});
-
-// Envio
-document.getElementById('submit-btn').addEventListener('click',async()=>{
-  const studentName = select.value;
-  if(!studentName){alert('Selecione seu nome');return;}
-  const answers={};
-  allQuestions.forEach(q=>{
-    const sel = document.querySelector(`input[name="q${q.id}"]:checked`);
-    answers[q.id] = sel?sel.value:'';
-  });
-
-  document.getElementById('loading').style.display='block';
-  document.getElementById('results').style.display='none';
-
-  try{
-    const res = await fetch(location.href,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({studentName,answers})
-    });
-    const result = await res.json();
-    document.getElementById('loading').style.display='none';
-    document.getElementById('result-message').textContent=result.message;
-    document.getElementById('results').style.display='block';
-  }catch(err){
-    document.getElementById('loading').style.display='none';
-    alert('Erro na comunicação com o WebApp: '+err.message);
-  }
-});
-</script>
-</body>
-</html>
+Frontend: <!DOCTYPE html> <html lang="pt-BR"> <head> <meta charset="utf-8" 
+/> <meta name="viewport" content="width=device-width,initial-scale=1" /> 
+<title>Cadastro de Ocorrências - 2025 (Unificado)</title> <!-- jsPDF para geração 
+local de PDF --> <script 
+src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script
+ > <style> * { box-sizing: border-box; margin:0; padding:0; } html,body{height:100%} 
+body{ font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif; background: linear
+gradient(135deg,#9fe7ff 0%, #b9f7c9 60%, #baf3ff 100%); color:#fff; font
+weight:800; padding:18px; } .app{max-width:1200px;margin:0 
+auto;display:flex;flex-direction:column;gap:18px} header{display:flex;align
+items:center;justify-content:space-between;padding:18px;border
+radius:14px;background:linear
+gradient(90deg,rgba(0,31,63,0.95),rgba(0,78,120,0.95));box-shadow:0 8px 30px 
+rgba(0,0,0,0.15)} header h1{font-size:20px;margin:0} .header
+controls{display:flex;gap:10px;align-items:center} 
+.card{background:#2f3336;padding:18px;border-radius:12px;box-shadow:0 8px 
+30px rgba(0,0,0,0.15)} .flex{display:flex;gap:18px;align-items:flex-start} 
+.col{display:flex;flex-direction:column;gap:12px} label{display:block;margin
+bottom:6px;font-size:13px} 
+input[type="text"],input[type="email"],input[type="password"],select,textarea,inp
+ ut[type="date"]{ width:100%;padding:10px 12px;border
+radius:8px;border:none;font-weight:800;font-size:14px;color:#111 } textarea{min
+height:110px;resize:vertical;padding-top:12px} 
+button{cursor:pointer;border:none;padding:10px 14px;border-radius:8px;font
+weight:900;box-shadow:0 6px 18px rgba(0,0,0,0.15)} .btn
+primary{background:linear-gradient(90deg,#1e3c72,#2a5298);color:#fff} .btn
+danger{background:linear-gradient(90deg,#e94b4b,#c62828);color:#fff} .btn
+success{background:linear-gradient(90deg,#4CAF50,#2E7D32);color:#fff} 
+.subtitle{font-size:14px;color:#d9f2ff;margin-bottom:6px} .historyList{max
+height:420px;overflow:auto;display:flex;flex-direction:column;gap:10px;padding
+right:6px} .historyItem{background:rgba(255,255,255,0.06);border-left:5px solid 
+rgba(255,255,255,0.06);padding:12px;border-radius:8px;color:#fff;font
+weight:700} .historyItem .meta{font-size:13px;color:#dbefff;font
+weight:800;display:flex;justify-content:space-between;gap:8px;align
+items:center} .historyItem .desc{margin-top:8px;color:#e7f7ff;font
+weight:600;font-size:14px} .modal-root{position:fixed;inset:0;display:none;align
+items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:2000} 
+.modal{width:92%;max-width:780px;background:#fff;color:#111;border
+radius:12px;padding:14px;max-height:84vh;overflow:auto} 
+.studentList{display:flex;flex-direction:column;gap:8px} .pill{background:linear
+gradient(90deg,#2a5298,#3a6bd1);color:#fff;padding:6px 10px;border
+radius:999px;font-weight:800;display:inline-block} .muted{opacity:.9;font
+weight:700;color:#e7f2ff} .qnum{color:#ff3b3b;font-weight:900} @media(max
+width:980px){.flex{flex-direction:column}header{flex
+direction:column;gap:8px;align-items:flex-start}} @keyframes 
+spin{to{transform:rotate(360deg)}} .loader{width:18px;height:18px;border:3px 
+solid rgba(255,255,255,0.2);border-top-color:#fff;border
+radius:50%;animation:spin 1s linear infinite;display:inline-block} .small { font
+weight:700; font-size:12px; opacity:0.95; } </style> </head> <body> <div 
+class="app"> <header> <h1>2025 — Cadastro de Ocorrências</h1> <div 
+class="header-controls"> <div id="userDisplay" class="muted">Não 
+autenticado</div> <button id="btnLogout" class="btn-danger" 
+style="display:none" onclick="logout()">Sair</button> </div> </header> <!-- 
+LOGIN UNIFICADO --> <div id="loginScreen" class="card" style="display:block"> 
+<div style="max-width:420px;margin:0 auto"> <div class="subtitle">Login</div> 
+<div style="margin-bottom:8px"> <label for="inputEmail">E-mail</label> <input 
+id="inputEmail" type="email" placeholder=""> </div> <div style="margin
+bottom:8px"> <label for="inputPassword">Senha</label> <input 
+id="inputPassword" type="password" placeholder=""> </div> <div 
+style="display:flex;gap:8px"> <button class="btn-primary" 
+onclick="handleLogin()">Entrar</button> </div> </div> </div> <!-- MAIN APP - 
+GESTÃO --> <div id="mainAppGestao" style="display:none;flex
+direction:column;gap:14px"> <div class="flex"> <div class="card col" 
+style="flex:1"> <div class="subtitle">CADASTRO — GESTÃO</div> <div 
+class="col"> <!-- Turma -> Aluno --> <div style="display:flex;gap:8px"> <div 
+style="flex:1"> <label>Turma</label> <select id="turma_gestao" 
+onchange="onTurmaChangeGestao()"> <option value="">-- carregando -
+</option> </select> </div> <div style="flex:1"> <label>Aluno</label> <select 
+id="aluno_gestao" onchange="onAlunoSelectGestao()"> <option value="">-- 
+selecione turma --</option> </select> </div> </div> <div 
+style="display:flex;gap:8px"> <div style="flex:1"> <label>RA</label> <input 
+id="ra_gestao" type="text" readonly> </div> <div style="flex:1"> 
+<label>Professor</label> <input id="professor_gestao" type="text"> </div> </div> 
+<div style="display:flex;gap:8px"> <div style="flex:1"> <label>Disciplina</label> 
+<input id="disciplina_gestao" type="text"> </div> <div style="flex:1"> 
+<label>Classificação</label> <select id="classificacao_gestao" 
+onchange="toggleSuspension('gestao')"> <option value="">Selecione</option> 
+<option value="OCORRÊNCIA">OCORRÊNCIA</option> <option 
+value="SUSPENSÃO">SUSPENSÃO</option> </select> </div> </div> <div 
+style="display:flex;gap:8px;align-items:flex-end"> <div style="flex:1;display:none" 
+id="suspensionRow_gestao"> <label>Data de retorno</label> <input 
+id="dataRetorno_gestao" type="date"> </div> <div style="flex:1"> 
+<label>Data</label> <input id="data_gestao" type="date"> </div> </div> <div> 
+<label>Descrição</label> <textarea id="descricao_gestao" 
+placeholder="Descrição detalhada"></textarea> </div> <div 
+style="display:flex;gap:8px;margin-top:8px"> <button class="btn-primary" 
+onclick="cadastrarOcorrenciaGestao()">Registrar (Gestão)</button> <button 
+class="btn-success" onclick="generatePDFLocal()">Gerar PDF (local)</button> 
+</div> <div id="successGestao" style="display:none;margin
+top:10px;background:linear
+gradient(90deg,#4CAF50,#2E7D32);padding:10px;border
+radius:8px;color:#fff;font-weight:900"> Ocorrência registrada com sucesso! </div> 
+</div> </div> </div> <!-- HISTÓRICO --> <div class="card"> <div 
+style="display:flex;justify-content:space-between;align-items:center"> <div 
+class="subtitle">HISTÓRICO DE OCORRÊNCIAS - GESTÃO</div> <div 
+style="display:flex;gap:8px;align-items:center"> <button class="btn-primary" 
+onclick="carregarHistoricoGestao()">Atualizar</button> </div> </div> <div 
+style="margin-top:12px" id="historyListGestao" class="historyList"></div> </div> 
+</div> <!-- mainAppGestao --> <!-- MAIN APP - PROFESSOR --> <div 
+id="mainAppProfessor" style="display:none;flex-direction:column;gap:14px"> <div 
+class="flex"> <div class="card col" style="flex:1"> <div class="subtitle">REGISTRO 
+— PROFESSOR</div> <div class="col"> <div style="display:flex;gap:8px"> <div 
+style="flex:1"> <label>Professor</label> <select id="professor_select"></select> 
+</div> <div style="flex:1"> <label>Turma</label> <select id="turma_select" 
+onchange="onTurmaChange()"></select> </div> </div> <div 
+style="display:flex;gap:8px"> <div style="flex:2"> <label>Alunos (clique para 
+selecionar)</label> <input id="alunos_selected_input" type="text" readonly 
+placeholder="Clique para selecionar" onclick="openStudentsModal()"> <div 
+id="selectedPills" style="margin-top:8px"></div> </div> <div style="flex:1"> 
+<label>Data</label> <input id="data_prof" type="date"> </div> </div> <div> 
+<label>Irregularidades</label> <div style="display:flex;gap:8px;flex
+wrap:wrap;margin-top:8px"> <label style="display:inline
+block;background:#efefef;color:#111;padding:6px 10px;border
+radius:999px"><input type="checkbox" name="irreg" value="Indisciplina"> 
+Indisciplina</label> <label style="display:inline
+block;background:#efefef;color:#111;padding:6px 10px;border
+radius:999px"><input type="checkbox" name="irreg" value="Agressão"> 
+Agressão</label> <label style="display:inline
+block;background:#efefef;color:#111;padding:6px 10px;border
+radius:999px"><input type="checkbox" name="irreg" value="Uso de celular"> Uso 
+de celular</label> <label style="display:inline
+block;background:#efefef;color:#111;padding:6px 10px;border
+radius:999px"><input type="checkbox" name="irreg" value="Falta de material"> 
+Falta de material</label> </div> </div> <div> <label>Descrição</label> <textarea 
+id="descricao_prof" placeholder="Descreva a ocorrência..."></textarea> </div> 
+<div style="display:flex;gap:8px;margin-top:8px"> <button class="btn-primary" 
+onclick="registrarOcorrenciaProfessor()">Registrar (Professor)</button> <button 
+class="btn-danger" onclick="clearProfessorForm()">Limpar</button> </div> <div 
+id="successProfessor" style="display:none;margin-top:10px;background:linear
+gradient(90deg,#4CAF50,#2E7D32);padding:10px;border
+radius:8px;color:#fff;font-weight:900"> Ocorrência registrada com sucesso! </div> 
+</div> </div> </div> <!-- HISTÓRICO PROFESSOR --> <div class="card"> <div 
+style="display:flex;justify-content:space-between;align-items:center"> <div 
+class="subtitle">HISTÓRICO DE OCORRÊNCIAS - PROFESSOR</div> <div 
+style="display:flex;gap:8px;align-items:center"> <button class="btn-primary" 
+onclick="carregarHistoricoProfessor()">Atualizar</button> </div> </div> <div 
+style="margin-top:12px" id="historyListProfessor" class="historyList"></div> 
+</div> </div> <!-- mainAppProfessor --> <!-- MODAL SELEÇÃO ALUNOS --> <div 
+id="modalRoot" class="modal-root"> <div class="modal"> <header 
+style="display:flex;justify-content:space-between;align-items:center;margin
+bottom:10px"> <strong>Selecionar alunos</strong> <button 
+onclick="closeStudentsModal()" style="background:transparent;border:none;font
+weight:900;cursor:pointer">✕</button> </header> <div> <input 
+id="studentSearch" type="text" placeholder="Filtrar alunos..." 
+style="width:100%;padding:8px;border-radius:8px;border:1px solid #ddd;margin
+bottom:10px" oninput="filterStudentList()"> <div id="studentList" 
+class="studentList"></div> </div> <div style="display:flex;justify-content:flex
+end;gap:8px;margin-top:12px"> <button class="btn-primary" 
+onclick="confirmStudents()">Confirmar</button> <button class="btn-danger" 
+onclick="closeStudentsModal()">Cancelar</button> </div> </div> </div> </div> 
+<script> /******************************* * CONFIGURAÇÃO: URL do seu Web 
+App (Apps Script) *******************************/ const SCRIPT_URL = 
+'https://script.google.com/macros/s/AKfycbyLJ4XZsbRyDLO90dmUJT4i7L4vBaLG7
+ Pt4DulvfYKYIh3AtrZQqYDt_TRW2Cjcjm3b/exec'; /* Planilhas/abas (usadas apenas 
+para enviar no payload) */ const SHEET_GERAL = 'BANCODEDADOSGERAL'; const 
+SHEET_PRO = 'OCORRENCIASDOSPROFESSORES'; const SHEET_GEST = 
+'BANCODEALUNOS'; /* estado */ let alunosDaTurmaAtual = []; // itens: { nome, ra } 
+(fallback pode ser strings) let alunosSelecionados = []; let professores = []; let 
+turmas = []; let currentUserRole = null; /* inicial */ 
+document.addEventListener('DOMContentLoaded', () => { 
+document.getElementById('data_prof').value = new 
+Date().toISOString().split('T')[0]; document.getElementById('data_gestao').value = 
+new Date().toISOString().split('T')[0]; // mostrar login 
+document.getElementById('loginScreen').style.display = 'block'; }); /* ----------------
+---------- LOGIN UNIFICADO - Um único campo email + senha - Redireciona para 
+'gestao' ou 'professor' conforme credenciais - Troque a verificação abaixo para 
+integrar com seu backend/autenticação real --------------------------- */ function 
+handleLogin(){ const email = document.getElementById('inputEmail').value.trim(); 
+const pass = document.getElementById('inputPassword').value.trim(); if(!email || 
+!pass){ alert('Informe e-mail e senha.'); return; } // ATENÇÃO: credenciais 
+hardcoded para demo local; trocar por verificação real se desejar. 
+if(email.toLowerCase() === 'gestao@escola.com' && pass === 'gestao123'){ 
+showAppAs('gestao', email); return; } if(email.toLowerCase() === 
+'professor@escola.com' && pass === 'prof123'){ showAppAs('professor', email); 
+return; } alert('E-mail ou senha incorretos.'); } function showAppAs(role,email){ 
+currentUserRole = role; document.getElementById('loginScreen').style.display = 
+'none'; if(role==='gestao'){ 
+document.getElementById('mainAppGestao').style.display = 'flex'; 
+document.getElementById('mainAppProfessor').style.display = 'none'; 
+carregarProfessoresETurmas(); carregarHistoricoGestao(); } else { 
+document.getElementById('mainAppGestao').style.display = 'none'; 
+document.getElementById('mainAppProfessor').style.display = 'flex'; 
+carregarProfessoresETurmas(); carregarHistoricoProfessor(); } 
+document.getElementById('userDisplay').textContent = email + (role==='gestao'?' 
+(Gestão)':' (Professor)'); document.getElementById('btnLogout').style.display = 
+'inline-block'; } function logout(){ currentUserRole=null; 
+document.getElementById('loginScreen').style.display='block'; 
+document.getElementById('mainAppGestao').style.display='none'; 
+document.getElementById('mainAppProfessor').style.display='none'; 
+document.getElementById('userDisplay').textContent='Não autenticado'; 
+document.getElementById('btnLogout').style.display='none'; 
+alunosDaTurmaAtual=[]; alunosSelecionados=[]; 
+document.getElementById('selectedPills').innerHTML=''; // limpar campos 
+document.getElementById('inputEmail').value=''; 
+document.getElementById('inputPassword').value=''; } 
+/******************************* * GET professores & turmas 
+*******************************/ async function carregarProfessoresETurmas(){ 
+try{ // teachers const r1 = await 
+fetch(${SCRIPT_URL}?endpoint=teachers&sheet=${encodeURIComponent(SHEET
+ _GERAL)}); if(!r1.ok){ console.warn('teachers fetch status:', r1.status, await 
+r1.text()); throw new Error('teachers fetch failed'); } const j1 = await r1.json(); 
+professores = (j1 && j1.status==='success' && Array.isArray(j1.teachers)) ? 
+j1.teachers : getFallbackProfessores(); // popular select de professores const 
+profSel = document.getElementById('professor_select'); if(profSel){ 
+profSel.innerHTML = '<option value=\"\">-- selecione --</option>'; 
+professores.forEach(p => { const o = document.createElement('option'); o.value = 
+p; o.textContent = p; profSel.appendChild(o); }); } // classes const r2 = await 
+fetch(${SCRIPT_URL}?endpoint=classes&sheet=${encodeURIComponent(SHEET_
+ GERAL)}); if(!r2.ok){ console.warn('classes fetch status:', r2.status, await r2.text()); 
+throw new Error('classes fetch failed'); } const j2 = await r2.json(); turmas = (j2 && 
+j2.status==='success' && Array.isArray(j2.classes)) ? j2.classes : 
+Object.keys(_getClassRanges()); // popular selects de turmas 
+['turma_select','turma_gestao'].forEach(id=>{ const sel = 
+document.getElementById(id); if(!sel) return; sel.innerHTML = '<option 
+value=\"\">-- selecione --</option>'; turmas.forEach(t=>{ const 
+o=document.createElement('option'); o.value=t; o.textContent=t; 
+sel.appendChild(o); }); }); }catch(err){ console.error('Erro 
+carregarProfessoresETurmas:', err); // fallback local professores = 
+getFallbackProfessores(); const profSel = 
+document.getElementById('professor_select'); if(profSel){ profSel.innerHTML = 
+'<option value=\"\">-- selecione --</option>'; professores.forEach(p => { const 
+o=document.createElement('option'); o.value = p; o.textContent = p; 
+profSel.appendChild(o); }); } turmas = Object.keys(_getClassRanges()); 
+['turma_select','turma_gestao'].forEach(id=>{ const sel = 
+document.getElementById(id); if(!sel) return; sel.innerHTML = '<option 
+value=\"\">-- selecione --</option>'; turmas.forEach(t=>{ const 
+o=document.createElement('option'); o.value=t; o.textContent=t; 
+sel.appendChild(o); }); }); } } /******************************* * GET students by 
+class * Expect backend to return either: * - array of strings ['Nome A','Nome B'] * - or 
+array of objects [{nome:'Nome A', ra:'123'}, ...] * We normalize to [{nome, ra}] 
+*******************************/ async function carregarAlunosPorTurma(turma){ 
+alunosDaTurmaAtual = []; if(!turma) return; try{ const resp = await 
+fetch(${SCRIPT_URL}?endpoint=students&sheet=${encodeURIComponent(SHEET
+ _GERAL)}&turma=${encodeURIComponent(turma)}); if(!resp.ok){ const body = 
+await resp.text(); console.warn('carregarAlunosPorTurma não OK:', resp.status, 
+body); // fallback para ranges locais preencherAlunosDoRangeLocal(turma); 
+return; } const json = await resp.json(); let raw = json.students || json.studentsList || 
+json.data || []; if(!Array.isArray(raw)) raw = []; // normalize alunosDaTurmaAtual = 
+raw.map(item => { if(typeof item === 'string') return { nome: item, ra: '' }; if(item && 
+item.nome) return { nome: item.nome, ra: item.ra || '' }; // if backend returns array 
+of arrays or rows, try to map first column as nome, second as ra 
+if(Array.isArray(item)) return { nome: item[0] || '', ra: item[1] || '' }; return null; 
+}).filter(x => x && String(x.nome).trim() !== ''); }catch(err){ console.error('Erro 
+carregarAlunosPorTurma:', err); preencherAlunosDoRangeLocal(turma); } } /* 
+Fallback: ler do mapa local _getClassRanges e extrair nomes/ras das ranges 
+definidas (usar quando backend não responde) */ function 
+preencherAlunosDoRangeLocal(turma){ alunosDaTurmaAtual = []; try { const 
+ranges = _getClassRanges(); if(!ranges[turma]) return; // ranges[turma] pode ter { 
+nameRange, raRange } ou string const r = ranges[turma]; if(typeof r === 'string'){ // 
+apenas nomes (intervalo string). Não conseguimos ler planilha do frontend; 
+deixamos vazio. alunosDaTurmaAtual = []; } else { // se o backend não responde, 
+ainda não conseguimos ler spreadsheet do client — portanto apenas colocamos 
+nomes vazios. // Ideal: backend deve retornar students; este fallback serve apenas 
+para evitar que o cliente quebre. alunosDaTurmaAtual = []; } } catch(e){ 
+alunosDaTurmaAtual = []; } } /* professor area: quando turma muda */ async 
+function onTurmaChange(){ const turma = 
+document.getElementById('turma_select').value; if(!turma){ alunosDaTurmaAtual 
+= []; renderStudentList([]); return; } await carregarAlunosPorTurma(turma); 
+renderStudentList(alunosDaTurmaAtual); } /* gestao area: quando turma muda -> 
+preencher select de aluno */ async function onTurmaChangeGestao(){ const 
+turma = document.getElementById('turma_gestao').value; const sel = 
+document.getElementById('aluno_gestao'); sel.innerHTML = 
+'<option>Carregando...</option>'; if(!turma){ alunosDaTurmaAtual=[]; 
+sel.innerHTML='<option value=\"\">-- selecione turma --</option>'; 
+document.getElementById('ra_gestao').value=''; return; } await 
+carregarAlunosPorTurma(turma); sel.innerHTML = '<option value=\"\">-- selecione --</option>'; alunosDaTurmaAtual.forEach(item => { const nome = (typeof item === 
+'object') ? item.nome : String(item); const o = document.createElement('option'); 
+o.value = nome; o.textContent = nome; sel.appendChild(o); }); 
+document.getElementById('ra_gestao').value = ''; } /* quando selecionar aluno 
+(gestão) preencher RA se disponível */ function onAlunoSelectGestao(){ const 
+nome = document.getElementById('aluno_gestao').value; const match = 
+alunosDaTurmaAtual.find(it => (typeof it === 'object' ? it.nome : String(it)) === 
+nome); if(match && match.ra) document.getElementById('ra_gestao').value = 
+match.ra; else document.getElementById('ra_gestao').value = ''; } 
+/******************************* * modal / seleção múltipla (professor) 
+*******************************/ function renderStudentList(list){ const container 
+= document.getElementById('studentList'); container.innerHTML=''; 
+list.forEach(item => { const nome = (typeof item === 'object') ? item.nome : 
+String(item); const row = document.createElement('div'); 
+row.style.display='flex';row.style.justifyContent='space
+between';row.style.alignItems='center';row.style.padding='8px';row.style.borderBo
+ ttom='1px solid #eee'; const lbl = document.createElement('div'); lbl.textContent = 
+nome; const cb = document.createElement('input'); cb.type='checkbox'; cb.value 
+= nome; cb.checked = alunosSelecionados.includes(nome); cb.onchange = (e) => { 
+if(e.target.checked){ if(!alunosSelecionados.includes(nome)) 
+alunosSelecionados.push(nome); } else alunosSelecionados = 
+alunosSelecionados.filter(x=>x!==nome); }; row.appendChild(lbl); 
+row.appendChild(cb); container.appendChild(row); }); } function 
+openStudentsModal(){ if(!alunosDaTurmaAtual || 
+alunosDaTurmaAtual.length===0){ alert('Nenhum aluno encontrado para a turma 
+selecionada.'); return; } 
+document.getElementById('modalRoot').style.display='flex'; 
+renderStudentList(alunosDaTurmaAtual); 
+document.getElementById('studentSearch').value=''; } function 
+closeStudentsModal(){ 
+document.getElementById('modalRoot').style.display='none'; } function 
+f
+ ilterStudentList(){ const 
+q=document.getElementById('studentSearch').value.toLowerCase(); 
+renderStudentList(alunosDaTurmaAtual.filter(s=> ( (typeof 
+s==='object'?s.nome:s).toLowerCase().includes(q) ))); } function 
+confirmStudents(){ document.getElementById('alunos_selected_input').value = 
+alunosSelecionados.join(', '); const 
+pills=document.getElementById('selectedPills'); pills.innerHTML=''; 
+alunosSelecionados.forEach(a=>{const 
+el=document.createElement('div');el.className='pill';el.textContent=a;pills.appe
+ ndChild(el);}); closeStudentsModal(); } /******************************* * Toggle 
+suspensão (gestão) *******************************/ function 
+toggleSuspension(area){ if(area==='gestao'){ const val = 
+document.getElementById('classificacao_gestao').value; 
+document.getElementById('suspensionRow_gestao').style.display = 
+(val==='SUSPENSÃO') ? 'flex' : 'none'; } } /******************************* * POST 
+cadastrar ocorrência (gestão) *******************************/ async function 
+cadastrarOcorrenciaGestao(){ const aluno = 
+document.getElementById('aluno_gestao').value.trim(); const serie = 
+document.getElementById('turma_gestao').value.trim(); const professor = 
+document.getElementById('professor_gestao').value.trim(); const disciplina = 
+document.getElementById('disciplina_gestao').value.trim(); const classificacao = 
+document.getElementById('classificacao_gestao').value; const descricao = 
+document.getElementById('descricao_gestao').value.trim(); const dataRetorno = 
+document.getElementById('dataRetorno_gestao').value || null; const date = 
+document.getElementById('data_gestao').value || new 
+Date().toISOString().split('T')[0]; if(!aluno || !serie || !professor || !disciplina || 
+!classificacao || !descricao){ alert('Preencha todos os campos obrigatórios.'); 
+return; } if(classificacao === 'SUSPENSÃO' && !dataRetorno){ alert('Informe data 
+de retorno para suspensão.'); return; } const payload = { sheet: SHEET_GEST, 
+startRow: 2, date: date, professor: professor, studentClass: serie, student: aluno, 
+irregularities: classificacao + (dataRetorno ? (' - retorno: ' + dataRetorno) : ''), 
+description: descricao }; try{ const resp = await 
+fetch(${SCRIPT_URL}?endpoint=occurrences, { method: 'POST', headers: { 
+'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if(!resp.ok){ 
+const text = await resp.text(); console.error('Resposta não OK do servidor 
+(gestao):', resp.status, text); alert('Erro ao comunicar com o servidor. Veja console 
+para detalhes (status '+resp.status+').'); return; } const j = await resp.json(); if(j && 
+j.status === 'success'){ 
+document.getElementById('successGestao').style.display='block'; 
+setTimeout(()=>document.getElementById('successGestao').style.display='none',2
+ 200); // limpar document.getElementById('aluno_gestao').value=''; 
+document.getElementById('turma_gestao').value=''; 
+document.getElementById('ra_gestao').value=''; 
+document.getElementById('professor_gestao').value=''; 
+document.getElementById('disciplina_gestao').value=''; 
+document.getElementById('classificacao_gestao').value=''; 
+document.getElementById('descricao_gestao').value=''; 
+document.getElementById('suspensionRow_gestao').style.display='none'; 
+carregarHistoricoGestao(); } else { console.error('Resposta JSON inesperada 
+(gestao):', j); alert('Erro ao registrar: resposta inesperada (ver console).'); } 
+}catch(err){ console.error('Erro POST ocorrencia (gestao):', err); alert('Erro ao 
+comunicar com o servidor (ver console). Possíveis causas: URL errada, Web App 
+não implantado com permissão "Anyone", ou doPost não implementado no 
+backend.'); } } /******************************* * POST registrar ocorrência 
+(professor) *******************************/ async function 
+registrarOcorrenciaProfessor(){ const professor = 
+document.getElementById('professor_select').value; const turma = 
+document.getElementById('turma_select').value; const dataOc = 
+document.getElementById('data_prof').value; const descricao = 
+document.getElementById('descricao_prof').value.trim(); if(!professor || !turma || 
+!dataOc || alunosSelecionados.length === 0){ alert('Preencha todos os campos 
+obrigatórios e selecione ao menos um aluno.'); return; } const irregs = 
+Array.from(document.querySelectorAll('input[name="irreg"]:checked')).map(x=>x.
+ value); const payload = { sheet: SHEET_PRO, startRow: 2, date: dataOc, professor: 
+professor, studentClass: turma, student: alunosSelecionados.join(', '), 
+irregularities: irregs.join(', '), description: descricao }; try{ const resp = await 
+fetch(${SCRIPT_URL}?endpoint=occurrences, { method:'POST', headers:{'Content
+Type':'application/json'}, body: JSON.stringify(payload) }); if(!resp.ok){ const text = 
+await resp.text(); console.error('Resposta não OK do servidor (professor):', 
+resp.status, text); alert('Erro ao comunicar com o servidor. Veja console (status 
+'+resp.status+').'); return; } const j = await resp.json(); if(j && j.status === 'success'){ 
+document.getElementById('successProfessor').style.display='block'; 
+setTimeout(()=>document.getElementById('successProfessor').style.display='non
+ e',2200); clearProfessorForm(); carregarHistoricoProfessor(); } else { 
+console.error('Resposta JSON inesperada (professor):', j); alert('Erro ao registrar: 
+resposta inesperada (ver console).'); } }catch(err){ console.error('Erro POST 
+ocorrencia (professor):', err); alert('Erro ao comunicar com o servidor (ver console). 
+Verifique o Web App.'); } } function clearProfessorForm(){ 
+document.getElementById('professor_select').value=''; 
+document.getElementById('turma_select').value=''; 
+document.getElementById('alunos_selected_input').value=''; 
+document.getElementById('selectedPills').innerHTML=''; 
+document.getElementById('descricao_prof').value=''; alunosSelecionados=[]; 
+Array.from(document.querySelectorAll('input[name="irreg"]')).forEach(cb=>cb.che
+ cked=false); document.getElementById('data_prof').value=new 
+Date().toISOString().split('T')[0]; } /******************************* * Histórico: 
+GET occurrences *******************************/ async function 
+carregarHistoricoGestao(){ const container = 
+document.getElementById('historyListGestao'); container.innerHTML = <div 
+style="display:flex;align-items:center;gap:8px"><div class="loader"></div><div 
+class="muted">Carregando histórico...</div></div>; try{ const resp = await 
+fetch(${SCRIPT_URL}?endpoint=occurrences); if(!resp.ok){ const text = await 
+resp.text(); console.error('carregarHistoricoGestao não OK', resp.status, text); 
+container.innerHTML='<div class=\"muted\">Erro ao carregar histórico (ver 
+console).</div>'; return; } const json = await resp.json(); const ocorrs = 
+json.occurrences || json.data || []; container.innerHTML = ''; if(!ocorrs || 
+ocorrs.length===0){ container.innerHTML = '<div class=\"muted\">Nenhuma 
+ocorrência encontrada.</div>'; return; } ocorrs.slice().reverse().forEach(r=>{ const 
+id = r.id || r.ID || r.Id || ''; const date = r.date || r.DATA || ''; const prof = r.professor || 
+r.PROFESSOR || ''; const turma = r.studentClass || r.TURMA || ''; const aluno = 
+r.student || r.ALUNO || ''; const irreg = r.irregularities || r.IRREGULARIDADES || ''; 
+const desc = r.description || r.DESCRICAO || ''; const div = 
+document.createElement('div'); div.className='historyItem'; const meta = 
+document.createElement('div'); meta.className='meta'; meta.innerHTML = 
+<div><strong>${date}</strong> — <span class=\"muted\">${prof}</span></div>; 
+const controls = document.createElement('div'); const pdfBtn = 
+document.createElement('button'); pdfBtn.className='btn-success'; 
+pdfBtn.style.fontSize='12px'; pdfBtn.textContent='Gerar PDF (template)'; 
+pdfBtn.onclick = ()=>generatePdfFromBackend(id); const delBtn = 
+document.createElement('button'); delBtn.className='btn-danger'; 
+delBtn.style.fontSize='12px'; delBtn.textContent='Excluir'; delBtn.onclick = 
+()=>deleteOccurrence(id); controls.appendChild(pdfBtn); 
+controls.appendChild(delBtn); meta.appendChild(controls); const ddesc = 
+document.createElement('div'); ddesc.className='desc'; ddesc.innerHTML = 
+<strong>Aluno(s):</strong> ${aluno || 'N/A'}<br/><strong>Turma:</strong> ${turma 
+|| 'N/A'}<br/><strong>Irregularidades:</strong> ${irreg || 'N/A'}<br/><em>${desc || 
+''}</em>; const idLine = document.createElement('div'); 
+idLine.style.marginTop='8px'; idLine.style.fontSize='12px'; 
+idLine.style.opacity='0.9'; idLine.innerHTML = ID: <span 
+class="qnum">${id}</span>; div.appendChild(meta); div.appendChild(ddesc); 
+div.appendChild(idLine); container.appendChild(div); }); }catch(err){ 
+console.error('Erro carregarHistoricoGestao:', err); container.innerHTML = '<div 
+class=\"muted\">Erro ao carregar histórico (ver console).</div>'; } } async function 
+carregarHistoricoProfessor(){ const container = 
+document.getElementById('historyListProfessor'); container.innerHTML = <div 
+style="display:flex;align-items:center;gap:8px"><div class="loader"></div><div 
+class="muted">Carregando histórico...</div></div>; try{ const resp = await 
+fetch(${SCRIPT_URL}?endpoint=occurrences); if(!resp.ok){ const text = await 
+resp.text(); console.error('carregarHistoricoProfessor não OK', resp.status, text); 
+container.innerHTML='<div class=\"muted\">Erro ao carregar histórico (ver 
+console).</div>'; return; } const json = await resp.json(); const ocorrs = 
+json.occurrences || json.data || []; container.innerHTML = ''; if(!ocorrs || 
+ocorrs.length===0){ container.innerHTML = '<div class=\"muted\">Nenhuma 
+ocorrência encontrada.</div>'; return; } ocorrs.slice().reverse().forEach(r=>{ const 
+date = r.date || r.DATA || ''; const prof = r.professor || r.PROFESSOR || ''; const turma 
+= r.studentClass || r.TURMA || ''; const aluno = r.student || r.ALUNO || ''; const irreg = 
+r.irregularities || r.IRREGULARIDADES || ''; const desc = r.description || 
+r.DESCRICAO || ''; const div = document.createElement('div'); 
+div.className='historyItem'; const meta = document.createElement('div'); 
+meta.className='meta'; meta.innerHTML = <div><strong>${date}</strong> — 
+<span class=\"muted\">${prof}</span></div>; const ddesc = 
+document.createElement('div'); ddesc.className='desc'; ddesc.innerHTML = 
+<strong>Aluno(s):</strong> ${aluno || 'N/A'}<br/><strong>Turma:</strong> ${turma 
+|| 'N/A'}<br/><strong>Irregularidades:</strong> ${irreg || 'N/A'}<br/><em>${desc || 
+''}</em>; div.appendChild(meta); div.appendChild(ddesc); 
+container.appendChild(div); }); }catch(err){ console.error('Erro 
+carregarHistoricoProfessor:', err); container.innerHTML = '<div 
+class=\"muted\">Erro ao carregar histórico (ver console).</div>'; } } 
+/******************************* * delete / generate pdf (backend) 
+*******************************/ async function deleteOccurrence(id){ if(!id){ 
+alert('ID inválido para exclusão.'); return; } if(!confirm('Confirmar exclusão (ID 
+'+id+')?')) return; try{ const resp = await fetch(${SCRIPT_URL}?endpoint=delete
+occurrence, { method:'POST', headers:{'Content-Type':'application/json'}, body: 
+JSON.stringify({ occurrenceId: id, sheet: SHEET_PRO }) }); if(!resp.ok){ const 
+t=await resp.text(); console.error('deleteOccurrence não OK',resp.status,t); 
+alert('Erro ao excluir (ver console).'); return; } const j = await resp.json(); if(j && 
+j.status==='success'){ alert('Ocorrência excluída.'); carregarHistoricoGestao(); } 
+else { alert('Erro ao excluir: ' + (j && j.message ? j.message : 'Resposta 
+inesperada')); } }catch(err){ console.error('Erro deleteOccurrence:', err); alert('Erro 
+ao comunicar com o servidor (ver console).'); } } async function 
+generatePdfFromBackend(occurrenceId){ if(!occurrenceId){ alert('ID inválido para 
+gerar PDF.'); return; } try{ const resp = await 
+fetch(${SCRIPT_URL}?endpoint=generate-pdf, { method:'POST', headers:{'Content
+Type':'application/json'}, body: JSON.stringify({ occurrenceId, sheet: SHEET_PRO }) 
+}); if(!resp.ok){ const t=await resp.text(); console.error('generatePdfFromBackend 
+não OK',resp.status,t); alert('Erro ao pedir geração de PDF (ver console).'); return; } 
+const j = await resp.json(); if(j && j.status==='success' && j.pdfUrl){ 
+window.open(j.pdfUrl, '_blank'); } else { alert('Servidor não retornou URL do PDF. 
+Veja console.'); } }catch(err){ console.error('Erro generatePdfFromBackend:', err); 
+alert('Erro ao comunicar com o servidor (ver console).'); } } 
+/******************************* * fallback: gerar PDF local 
+*******************************/ function generatePDFLocal(){ try{ const { jsPDF } 
+= window.jspdf; const doc = new jsPDF(); doc.setFontSize(16); doc.text('Registro 
+de Ocorrência', 14, 20); const aluno = 
+document.getElementById('aluno_gestao').value || ''; const turma = 
+document.getElementById('turma_gestao').value || ''; const prof = 
+document.getElementById('professor_gestao').value || ''; const desc = 
+document.getElementById('descricao_gestao').value || ''; let y = 36; if(aluno){ 
+doc.text(Aluno: ${aluno}, 14, y); y+=8 } if(turma){ doc.text(Turma: ${turma}, 14, y); 
+y+=8 } if(prof){ doc.text(Professor: ${prof}, 14, y); y+=8 } doc.text('Descrição:', 14, y); 
+y+=8; doc.text(doc.splitTextToSize(desc || 'Sem descrição', 180), 14, y); 
+doc.save(ocorrencia_${Date.now()}.pdf); }catch(err){ console.error('Erro gerar PDF 
+local:', err); alert('Erro ao gerar PDF local (ver console).'); } } 
+/******************************* * utilitários / fallbacks * Aqui definimos o mapa 
+de turmas -> { nameRange, raRange } (fallback local) 
+*******************************/ function _getClassRanges(){ return { "6° ANO A 
+MANHA": { nameRange: "C3:C46", raRange: "F3:F46" }, "6° ANO B MANHA": { 
+nameRange: "H3:H46", raRange: "K3:K46" }, "6° ANO C MANHA": { nameRange: 
+"M3:M46", raRange: "P3:P46" }, "6° ANO D MANHA": { nameRange: "R3:R46", 
+raRange: "U3:U46" }, "6° ANO E TARDE": { nameRange: "W3:W46", raRange: 
+"W3:W46" }, // RA fornecido igual (W3:W) "6° ANO F TARDE": { nameRange: 
+"AB3:AB46", raRange: "AE3:AE46" }, "7° ANO A TARDE": { nameRange: "AG3:AG46", 
+raRange: "AJ3:AJ46" }, "7° ANO B TARDE": { nameRange: "AL3:AL46", raRange: 
+"AO3:AO46" }, "7° ANO C TARDE": { nameRange: "AQ3:AQ46", raRange: "AT3:AT46" 
+}, "7° ANO D TARDE": { nameRange: "AV3:AV46", raRange: "AY3:AY46" }, "7° ANO E 
+TARDE": { nameRange: "BA3:BA46", raRange: "AD3:AD46" }, "7° ANO F TARDE": { 
+nameRange: "BF3:BF46", raRange: "BF3:BF46" }, "8° ANO A TARDE": { nameRange: 
+"BK3:BK46", raRange: "BN3:BN46" }, "8° ANO B TARDE": { nameRange: "BP3:BP46", 
+raRange: "BS3:BS46" }, "8° ANO C TARDE": { nameRange: "BU3:BU46", raRange: 
+"BX3:BX46" }, "8° ANO D TARDE": { nameRange: "BZ3:BZ46", raRange: "CC3:CC46" 
+}, "8° ANO E TARDE": { nameRange: "CE3:CE46", raRange: "CH3:CH46" }, // CE3:CE 
++ CH3:CH "9° ANO A TARDE": { nameRange: "CE3:CE46", raRange: "CM3:CM46" }, 
+"9° ANO B TARDE": { nameRange: "CJ3:CJ46", raRange: "CR3:CR46" }, "9° ANO C 
+TARDE": { nameRange: "CO3:CO46", raRange: "CW3:CW46" }, "9° ANO D TARDE": { 
+nameRange: "CT3:CT46", raRange: "DB3:DB46" }, "1ª SERIE A MANHA": { 
+nameRange: "CY3:CY46", raRange: "DG3:DG46" }, "1ª SERIE B MANHA": { 
+nameRange: "DD3:DD46", raRange: "DL3:DL46" }, "1ª SERIE C MANHA": { 
+nameRange: "DI3:DI46", raRange: "DQ3:DQ46" }, "1ª SERIE D MANHA": { 
+nameRange: "DN3:DN46", raRange: "DV3:DV46" }, "1ª SERIE E MANHA": { 
+nameRange: "DS3:DS46", raRange: "EA3:EA46" }, "1ª SERIE F MANHA": { 
+nameRange: "DX3:DX46", raRange: "EF3:EF46" }, "1ª SERIE G TARDE": { 
+nameRange: "EC3:EC46", raRange: "EK3:EK46" }, "1ª SERIE H NOITE": { 
+nameRange: "EH3:EH46", raRange: "EP3:EP46" }, "1ª SERIE I NOITE": { nameRange: 
+"EM3:EM46", raRange: "EU3:EU46" }, "2ª SERIE A MANHA": { nameRange: 
+"ER3:ER46", raRange: "EZ3:EZ46" }, "2ª SERIE B MANHA": { nameRange: 
+"EW3:EW46", raRange: "FE3:FE46" }, "2ª SERIE C MANHA": { nameRange: 
+"FB3:FB46", raRange: "FJ3:FJ46" }, "2ª SERIE D MANHA": { nameRange: "FG3:FG46", 
+raRange: "FO3:FO46" }, "2ª SERIE E MANHA": { nameRange: "FL3:FL46", raRange: 
+"FT3:FT46" }, "2ª SERIE F NOITE": { nameRange: "FQ3:FQ46", raRange: "GD3:GD46" 
+}, // mapeamento fornecido "2ª SERIE G NOITE": { nameRange: "FV3:FV46", 
+raRange: "GS3:GS46" }, "2ª SERIE H NOITE": { nameRange: "GA3:GA46", raRange: 
+"GX3:GX46" }, "3ª SERIE A MANHA": { nameRange: "GK3:GK46", raRange: 
+"HC3:HC46" }, "3ª SERIE B MANHA": { nameRange: "GP3:GP46", raRange: 
+"HH3:HH46" }, "3ª SERIE C MANHA": { nameRange: "GU3:GU46", raRange: 
+"HM3:HM46" }, "3ª SERIE D NOITE": { nameRange: "GZ3:GZ46", raRange: 
+"HR3:HR46" }, "3ª SERIE E NOITE": { nameRange: "HE3:HE46", raRange: 
+"HW3:HW46" }, "3ª SERIE F NOITE": { nameRange: "HJ3:HJ46", raRange: 
+"HT3:HT46" }, // exemplo: HT3:HT for ras "3ª SERIE G NOITE": { nameRange: 
+"HT3:HT46", raRange: "HW3:HW46" } // conforme sua última nota }; } /* Lista 
+completa de professores (fallback) */ function getFallbackProfessores(){ return [ 
+"ALEX LUTH PEREIRA MARANHAO","ALEXSANDRA PAULA VARELLA DE 
+SOUZA","ALISON VASCONCELOS BESERRA","AMAURI TEODORO DE OLIVEIRA", 
+"ANA PAULA DOS SANTOS","ANDREIA DOS SANTOS FREITAS","ANDREIA 
+MADUREIRA REIS","ANTONIO CARLOS DE OLIVEIRA", "ANTONIO RAMOS DE 
+ARAUJO","ANTONIO WILTON WANDERLEY CABRAL","AUGUSTO LINO PESSOA 
+NETO","AUREA MARIA DE JESUS MARQUES", "CAROLINA PERNOMIAN 
+PARUSSOLOLO","CASSIA OLIVEIRA ANTONIAZI","CLAUDINEIA DE AGUIAR 
+LIMA","DANIEL DE FREITAS ALMEIDA", "DANIEL LOPES BARBOSA","DANIELA 
+FERREIRA LIMA","DANIELLE LUCIA BATISTA DE ALMEIDA","EDIANE VIEIRA DA 
+SILVA", "EDILEUSA NUNES PEREIRA","EDUARDO HENRIQUE DA FONSECA","ELIANE 
+SANTOS SILVA","ELIAS MONTEIRO DA SILVA", "ELISABETE APARECIDA PIRES","ELZA 
+DE FARIA PEREIRA","EMERSON GABLER DE ALMEIDA","EUZELI ARAUJO DE 
+OLIVEIRA", "FABIANO AUGUSTO PIEDADE","FABIO CAMILO","FERNANDO JOSE DA 
+SILVA FILHO","FLAVIA CRISTINA APARECIDA BICHLER", "FLAVIO CARDOSO 
+FLEURY","FRANCISCA EDIVANIA DE MORAIS COSTA","GABRIELA SERIGHELLI DE 
+MELO","GELSON DE ALMEIDA BATISTA", "GENILTON DE OLIVEIRA SILVA","GIANI 
+CRISTINA DO PRADO","INGRYD CAROLINA SUGUIMOTO VIEIRA","IVANILDES DOS 
+SANTOS OSHIKAWA", "JANINA DOS PASSOS BRAGA DE ALMEIDA","JOSE 
+APARECIDO DA SILVA","JUAREZ GOMES DE MAGALHAES FILHO","JUREMA 
+SOLEDADE FURINI SANTOS", "KATIUSCIA ALVES BOMFIM","LUANA CAROLINE 
+ALVES LIMA","LUANA DE FREITAS SILVA","LUCIANA NOVAIS CORREIA SANTOS", 
+"LUCIANO MOREIRA DE AZEVEDO","MARCIEL DA SILVA","MARIA HELENA CUNHA 
+MORO","MARIA QUITÉRIA FERREIRA DOS SANTOS", "MARINA DA CONCEICAO 
+FRANCISCO SILVA","MAURICIO DE BARROS SANTOS","MICHELE DE PINHO 
+MORAES","MOISES ANTONIO DE BARROS", "PAULA ARMANI VILA","PAULO 
+ROBERTO DA SILVA ITO","PEDRO ZANOTTI FILHO","RAUL PEREIRA VILERA JUNIOR", 
+"REGIANE CURTI DE SOUZA OLIVEIRA","REGINA DA SILSA CASTRO","RICARDO 
+AMERICO DA SILVA","ROBERTO SALGADO", "RODRIGO VIEIRA","ROSANGELA 
+CAFASSO MOREIRA","ROSIMERY DE SOUZA PESSOA","ROSMARA DA SILSA 
+CARDOSO", "SANDRA CRISTINA MACEDO MORAES","SELMA GOMES DA 
+SILSA","SERGIO AGRIPINO VILLA NOVA","SOLANGE ALMEIDA DA SILSA", 
+"SUZINEIDE SILSA DE FREITAS","THIAGO FABIANO BRITO","TITTO AUGUSTO 
+NASCIMENTO SILSA","VANDERSON HYPPOLITO", "VANESSA IVETE GOMES DOS 
+SANTOS","VANIA PENHA DE BARROS","VIVIANE LEAL CAMERA DE 
+MORAES","WILSON RODRIGUES MOTA" ];} </script> </body> </html> 

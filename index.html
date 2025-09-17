@@ -86,16 +86,7 @@
 </div>
 
 <script>
-/*
-  FRONTEND sem gabarito embutido.
-  - Todas as questões têm 'id', 'question', 'options' e 'explanation'
-  - NÃO há propriedade 'correct' aqui (gabarito deve ficar no backend).
-  - Ao enviar, o frontend manda JSON ao backend e aguarda resposta JSON com:
-      { status: "OK", score: N, details: [ { id: 1, correct: true/false, explanation: "..." }, ... ] }
-    ou, caso o backend não retorne JSON, faz fallback para mensagem textual.
-*/
-
-/* === LISTA COMPLETA DE ALUNOS (copiada do seu primeiro código) === */
+/* === LISTA COMPLETA DE ALUNOS === */
 const students = [
  { id: 1, name: "ALEXANDRE BATISTA DOS SANTOS", email: "00001141439785SP@al.educacao.sp.gov.br" },
  { id: 5, name: "ANA LÍVIA BRAGA DOS SANTOS", email: "00001122248246SP@al.educacao.sp.gov.br" },
@@ -142,7 +133,7 @@ const students = [
  { id: 82, name: "JULIA ARAUJO DE LIMA", email: "00001101366886SP@al.educacao.sp.gov.br" }
 ];
 
-/* === QUESTÕES (SEM GABARITO embutido) === */
+/* === QUESTÕES (COMPLETAS, exatamente como fornecido) === */
 const allQuestions = [
   {
     id:1,
@@ -256,9 +247,8 @@ const allQuestions = [
   }
 ];
 
-/* === CONFIGURAÇÕES === */
-/* Substitua esta URL pelo seu WebApp do Apps Script (terminando em /exec) */
-const backendUrl = 'https://script.google.com/macros/s/AKfycbynH1Y_qXOmwUbydfXnL9qqRYMW0PaoV3LnSmSbqnOAhjwMnECrWPKh0XDv9F7SbQfQ/exec';
+/* === URL do backend (mude para sua /exec quando publicar) === */
+const backendUrl = "https://script.google.com/macros/s/AKfycbynH1Y_qXOmwUbydfXnL9qqRYMW0PaoV3LnSmSbqnOAhjwMnECrWPKh0XDv9F7SbQfQ/exec";
 
 /* === RENDERIZAÇÃO E LÓGICA === */
 let studentAnswers = {};
@@ -336,38 +326,31 @@ async function onSubmit(){
   document.getElementById('submit-btn').disabled = true;
 
   try{
-    const res = await fetch('https://script.google.com/macros/s/AKfycbynH1Y_qXOmwUbydfXnL9qqRYMW0PaoV3LnSmSbqnOAhjwMnECrWPKh0XDv9F7SbQfQ/exec', {
+    const res = await fetch(backendUrl, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify(payload)
     });
 
-    const text = await res.text();
-
-    // tenta parsear JSON
-    let json;
-    try { json = JSON.parse(text); } catch(e){ json = null; }
-
-    if(!res.ok){
-      throw new Error('Resposta do servidor não é OK: ' + res.status);
+    if (!res.ok) {
+      const txt = await res.text();
+      throw new Error('Resposta do servidor: ' + res.status + ' - ' + txt);
     }
 
-    // Caso backend retorne JSON com estrutura esperada:
-    // { status: "OK", score: N, details: [{id:1, correct:true, explanation:"..."}, ...] }
+    const json = await res.json();
+
     if(json && json.status && json.status.toUpperCase()==='OK'){
       displayResultsFromBackend(json);
     } else {
-      // fallback: backend respondeu texto (ex: "OK" ou mensagem). Mostramos aviso e ainda acoplar feedback local sem gabarito:
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('submit-btn').disabled = false;
-      alert('Respostas enviadas com sucesso. O servidor retornou: ' + text + '\nObservação: para receber a nota e feedback automático, publique um doPost que retorne JSON com o resultado.');
+      throw new Error((json && json.message) ? json.message : 'Resposta inesperada do servidor.');
     }
 
   } catch(err){
     console.error(err);
+    alert('Ocorreu um erro ao enviar as respostas. Verifique o link do WebApp, as permissões e se o WebApp está publicado corretamente. Erro: ' + err.message);
+  } finally {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('submit-btn').disabled = false;
-    alert('Ocorreu um erro ao enviar as respostas. Verifique o link do WebApp e as permissões. Erro: ' + err.message);
   }
 }
 
@@ -382,30 +365,33 @@ function displayResultsFromBackend(json){
   const feedbackDiv = document.getElementById('feedback');
   feedbackDiv.innerHTML = '';
 
-  // json.details deve ser array com objetos {id, correct, explanation (opcional)}
   if(Array.isArray(json.details)){
-    json.details.forEach((d, idx) => {
+    json.details.sort((a,b) => a.id - b.id).forEach((d, idx) => {
       const q = allQuestions.find(x => x.id == d.id);
       const wasCorrect = !!d.correct;
-      const userAnswer = (d.userAnswer !== undefined) ? d.userAnswer : (studentAnswers[d.id] || 'não respondida');
+      const userAnswer = (d.userAnswer !== undefined && d.userAnswer !== null) ? d.userAnswer : 'não respondida';
+      const correctAnswer = d.correctAnswer || (d.explanation ? 'ver explicação' : '');
 
       let block = document.createElement('div');
       block.style.marginBottom = '10px';
 
       const line = document.createElement('p');
-      line.innerHTML = `<strong>Questão ${idx+1}:</strong> ${wasCorrect ? "<span class='correct'>✓ Correta</span>" : "<span class='incorrect'>✗ Incorreta</span>"} <br><strong>Sua resposta:</strong> ${userAnswer}`;
+      line.innerHTML = `<strong>Questão ${d.id}:</strong> ${wasCorrect ? "<span class='correct'>✓ Correta</span>" : "<span class='incorrect'>✗ Incorreta</span>"} <br><strong>Sua resposta:</strong> ${userAnswer} ${!wasCorrect ? `<br><strong>Gabarito:</strong> ${correctAnswer}` : ''}`;
       block.appendChild(line);
 
-      if(!wasCorrect){
-        // mostrar explicação (do objeto d.explanation do backend; se ausente, usar a explicação do front)
-        const expl = d.explanation || (q ? q.explanation : '');
-        if(expl){
-          const p = document.createElement('p');
-          p.style.marginTop = '6px';
-          p.style.fontStyle = 'italic';
-          p.textContent = expl;
-          block.appendChild(p);
-        }
+      // mostrar explicação (do backend)
+      if(d.explanation){
+        const p = document.createElement('p');
+        p.style.marginTop = '6px';
+        p.style.fontStyle = 'italic';
+        p.textContent = d.explanation;
+        block.appendChild(p);
+      } else if(q && q.explanation){
+        const p = document.createElement('p');
+        p.style.marginTop = '6px';
+        p.style.fontStyle = 'italic';
+        p.textContent = q.explanation;
+        block.appendChild(p);
       }
 
       feedbackDiv.appendChild(block);
@@ -423,5 +409,3 @@ window.addEventListener('DOMContentLoaded', initializePage);
 </script>
 </body>
 </html>
-
-
